@@ -135,6 +135,57 @@
     100%{box-shadow:0 0 0 0 rgba(255,107,74,0)}
   }
 
+  /* ---------- view mode toggle ---------- */
+  .modes{display:flex;margin:0 0 22px;border:3px solid var(--ink);
+    box-shadow:var(--pop-sm);background:var(--surface)}
+  .mode{
+    flex:1;appearance:none;cursor:pointer;background:transparent;color:var(--ink-45);
+    border:0;border-right:3px solid var(--ink);
+    font-family:var(--display);font-weight:600;text-transform:uppercase;
+    letter-spacing:.11em;font-size:12px;padding:10px 4px 9px;line-height:1;
+    transition:background .14s,color .14s;
+  }
+  .mode:last-child{border-right:0}
+  .mode[aria-pressed="true"]{background:var(--ink);color:var(--sand)}
+  .mode:focus-visible{outline:3px solid var(--azure);outline-offset:-4px}
+
+  /* ---------- arena view ---------- */
+  .arena-h{
+    display:flex;align-items:center;gap:9px;margin:0 0 10px;
+    border-bottom:3px solid var(--ink);padding-bottom:7px;
+  }
+  .arena-h i{
+    font-style:normal;flex:none;font-family:var(--display);font-weight:700;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#fff;
+    background:var(--ink);padding:4px 7px 3px;
+  }
+  .arena-h b{font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.04em;font-size:16px;line-height:1.1}
+  .arow{
+    display:flex;align-items:center;gap:10px;
+    background:var(--surface);border:2px solid var(--ink);
+    box-shadow:var(--pop-sm);padding:8px 11px;margin-bottom:7px;
+  }
+  .arow .t{font-family:var(--display);font-weight:700;font-size:14px;
+    flex:none;width:68px;letter-spacing:.02em}
+  .arow .who{flex:1;min-width:0;font-family:var(--display);font-weight:600;
+    text-transform:uppercase;font-size:15px;letter-spacing:.025em;line-height:1.15;
+    overflow-wrap:break-word}
+  .arow .hl{flex:none;text-align:right;font-family:var(--display);font-weight:700;
+    font-size:14px;letter-spacing:.04em;line-height:1.15}
+  .arow .hl small{display:block;font-size:9px;font-weight:500;letter-spacing:.13em;
+    color:var(--ink-45);text-transform:uppercase}
+  .arow .tag{
+    flex:none;font-family:var(--display);font-weight:700;font-size:9px;
+    letter-spacing:.14em;text-transform:uppercase;background:var(--ink);color:#fff;
+    padding:3px 6px 2px;
+  }
+  .arow.is-done{opacity:.4;box-shadow:none;border-color:var(--ink-15)}
+  .arow.is-next{background:var(--sun);border-width:3px;box-shadow:var(--pop)}
+  .arow.is-live{background:var(--azure);border-width:3px;box-shadow:var(--pop);color:#fff}
+  .arow.is-live .hl small{color:rgba(255,255,255,.82)}
+  .arow.is-live .tag{background:#fff;color:var(--ink)}
+
   /* ---------- section headings ---------- */
   .sec{margin:0 0 26px}
   .sec-h{
@@ -301,6 +352,10 @@
     <div class="hero-v num" id="heroV">—</div>
     <div class="hero-sub" id="heroSub"></div>
   </section>
+  <div class="modes" role="group" aria-label="Schedule view">
+    <button class="mode" type="button" id="mode-time" aria-pressed="true">By time</button>
+    <button class="mode" type="button" id="mode-arena" aria-pressed="false">By arena</button>
+  </div>
   <div id="body"></div>
 </main>
 
@@ -428,6 +483,15 @@
 
   var selected = null; // null = follow the calendar
 
+  // 'time' = chronological running order, 'arena' = grouped by event/arena.
+  // Remembered per viewer; storage can throw in private mode, so it is
+  // always guarded and the page renders fine without it.
+  var viewMode = 'time';
+  try {
+    var saved = localStorage.getItem('bb26-view');
+    if (saved === 'arena' || saved === 'time') viewMode = saved;
+  } catch (err) {}
+
   function classify(day, t){
     var dur = day.heatMinutes * 60000;
     var live = [], upcoming = [], done = [];
@@ -487,6 +551,39 @@
     if (!day.tbd || !day.tbd.length) return '';
     return '<div class="tbd"><h3>Not yet scheduled</h3><p>' +
       day.tbd.map(esc).join(' · ') + '</p></div>';
+  }
+
+  // Event number and arena are locked together in the source sheet:
+  // Event 1 is always Backout Barbell, Event 2 Mayhem, and so on. So one
+  // grouping answers both "which event" and "which arena".
+  function arenaSections(day, c){
+    function key(e){ return e.name + '|' + e.eventNo; }
+    var status = {};
+    c.done.forEach(function(r){ status[key(r.e)] = 'is-done'; });
+    c.live.forEach(function(r){ status[key(r.e)] = 'is-live'; });
+    c.next.forEach(function(r){ status[key(r.e)] = 'is-next'; });
+
+    return DATA.arenas.map(function(arena, i){
+      var rows = day.entries.filter(function(e){ return e.arena === arena; })
+        .sort(function(a, b){
+          return a.startSec - b.startSec || a.name.localeCompare(b.name);
+        });
+      if (!rows.length) return '';
+      return '<section class="sec">' +
+        '<div class="arena-h"><i>Event ' + (i + 1) + '</i><b>' +
+          esc(arena) + '</b></div>' +
+        rows.map(function(e){
+          var st = status[key(e)] || '';
+          var tag = st === 'is-live' ? '<span class="tag">Now</span>'
+                  : st === 'is-next' ? '<span class="tag">Next</span>' : '';
+          return '<div class="arow ' + st + '">' +
+            '<b class="t num">' + esc(e.time) + '</b>' +
+            '<div class="who">' + esc(e.name) + '</div>' + tag +
+            '<div class="hl num">' + e.heat + ' / ' + e.lane +
+            '<small>Heat / Lane</small></div></div>';
+        }).join('') +
+      '</section>';
+    }).join('');
   }
 
   function render(){
@@ -594,7 +691,14 @@
       }
     }
 
-    if (!isToday && t >= b.first && t < b.last) { /* only possible via ?now= */ }
+    document.getElementById('mode-time')
+      .setAttribute('aria-pressed', String(viewMode === 'time'));
+    document.getElementById('mode-arena')
+      .setAttribute('aria-pressed', String(viewMode === 'arena'));
+
+    // The hero always reflects live status; only the listing below it swaps.
+    if (viewMode === 'arena') out = [arenaSections(day, c), tbdHTML(day)];
+
     document.getElementById('body').innerHTML = out.join('');
   }
 
@@ -602,6 +706,15 @@
   ['saturday','sunday'].forEach(function(id){
     document.getElementById('tab-' + id).addEventListener('click', function(){
       selected = id; render();
+    });
+  });
+
+  /* ---- view mode ---- */
+  [['mode-time','time'], ['mode-arena','arena']].forEach(function(pair){
+    document.getElementById(pair[0]).addEventListener('click', function(){
+      viewMode = pair[1];
+      try { localStorage.setItem('bb26-view', viewMode); } catch (err) {}
+      render();
     });
   });
 
