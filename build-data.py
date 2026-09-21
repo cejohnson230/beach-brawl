@@ -83,10 +83,10 @@ def main():
         "arenas": ARENAS,
         "days": [
             {"id": "saturday", "label": "Saturday", "date": "2026-09-26",
-             "division": "Individuals", "heatMinutes": 15,
+             "division": "Individuals", "heatMinutes": 15, "wodKey": "individual",
              "entries": ind, "tbd": tbd_i},
             {"id": "sunday", "label": "Sunday", "date": "2026-09-27",
-             "division": "Teams", "heatMinutes": 17,
+             "division": "Teams", "heatMinutes": 17, "wodKey": "team",
              "entries": team, "tbd": tbd_t},
         ],
     }
@@ -165,15 +165,44 @@ def main():
 
     OUT.write_text(json.dumps(data, indent=2) + "\n")
 
+    # --- workouts, keyed by event number ---------------------------------
+    # The heat sheet and the organisers' site spell two arenas differently
+    # ("Backout"/"Blackout", "LRX Beach"/"LRX"), so workouts are attached by
+    # event number. This check catches the day either source reorders them.
+    WOD_SRC = ROOT / "data" / "workouts.json"
+    wods = json.loads(WOD_SRC.read_text()) if WOD_SRC.exists() else {}
+    if wods:
+        keyword = {1: "barbell", 2: "mayhem", 3: "lrx", 4: "apparel"}
+        for day in data["days"]:
+            for e in day["entries"]:
+                n = e["eventNo"]
+                site = wods.get(day["wodKey"], {}).get(str(n), {}).get("arena", "")
+                if keyword[n] not in e["arena"].lower():
+                    errs.append(f"sheet event {n} arena {e['arena']!r} "
+                                f"lacks {keyword[n]!r}")
+                if site and keyword[n] not in site.lower():
+                    errs.append(f"workout event {n} arena {site!r} "
+                                f"lacks {keyword[n]!r}")
+        if errs:
+            print("\nARENA MAPPING FAILED \u2014 nothing written:", file=sys.stderr)
+            for e in sorted(set(errs)):
+                print("  -", e, file=sys.stderr)
+            sys.exit(1)
+        print(f"workouts: {sum(len(v) for v in wods.values())} events attached")
+    else:
+        print("workouts: none found (run build-workouts.py)")
+
     # --- inject into the page -------------------------------------------
     tpl = (ROOT / "src" / "index.template.html").read_text()
-    token = "__SCHEDULE_JSON__"
-    if token not in tpl:
-        print("template placeholder missing", file=sys.stderr)
-        sys.exit(1)
+    for token in ("__SCHEDULE_JSON__", "__WORKOUTS_JSON__"):
+        if token not in tpl:
+            print(f"template placeholder {token} missing", file=sys.stderr)
+            sys.exit(1)
     # Compact, and neutralise any sequence that could close the script tag.
-    blob = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
-    page = tpl.replace(token, blob)
+    def blob(o):
+        return json.dumps(o, separators=(",", ":")).replace("</", "<\\/")
+    page = (tpl.replace("__SCHEDULE_JSON__", blob(data))
+               .replace("__WORKOUTS_JSON__", blob(wods)))
     (ROOT / "index.html").write_text(page)
     print(f"wrote index.html ({len(page)/1024:.1f} KB)")
 

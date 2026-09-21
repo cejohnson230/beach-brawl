@@ -163,6 +163,95 @@
   .mode[aria-pressed="true"]{background:var(--ink);color:var(--sand)}
   .mode:focus-visible{outline:3px solid var(--azure);outline-offset:-4px}
 
+  /* ---------- division picker ---------- */
+  /* display:flex would otherwise beat the [hidden] attribute, leaving the
+     picker on screen in every view. */
+  .picker[hidden]{display:none}
+  .picker{
+    display:flex;align-items:center;gap:10px;margin:0 0 20px;
+    border:3px solid var(--ink);background:var(--surface);
+    box-shadow:var(--pop-sm);padding:9px 11px;
+  }
+  .picker label{
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.14em;font-size:10.5px;color:var(--ink-45);flex:none;
+  }
+  .picker select{
+    flex:1;min-width:0;appearance:none;cursor:pointer;
+    background:transparent;border:0;color:var(--ink);
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.05em;font-size:16px;padding:2px 18px 2px 0;
+    background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),
+                     linear-gradient(135deg,var(--ink) 50%,transparent 50%);
+    background-position:calc(100% - 9px) 55%, calc(100% - 4px) 55%;
+    background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+  }
+  .picker select:focus-visible{outline:3px solid var(--azure);outline-offset:3px}
+
+  /* ---------- workouts ---------- */
+  .wod{margin:0 0 24px}
+  .wod-h{
+    display:flex;align-items:center;gap:9px;margin-bottom:8px;
+    border-bottom:3px solid var(--ac,var(--ink));padding-bottom:7px;
+  }
+  .wod-h i{
+    font-style:normal;flex:none;font-family:var(--display);font-weight:700;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#fff;
+    background:var(--acd,var(--ink));padding:4px 7px 3px;
+  }
+  .wod-h b{
+    flex:1;min-width:0;font-family:var(--display);font-weight:700;
+    text-transform:uppercase;letter-spacing:.04em;
+    font-size:clamp(15px,4.3vw,18px);line-height:1.1;color:var(--acd,var(--ink));
+  }
+  .wod-h .when{
+    flex:none;font-family:var(--display);font-weight:700;font-size:13px;
+    letter-spacing:.03em;color:var(--ink-45);
+  }
+  .tagline{
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.11em;font-size:11px;color:var(--ink-45);margin-bottom:9px;
+  }
+  .tagline em{font-style:normal;color:var(--acd,var(--ink))}
+  .wod-body{
+    background:var(--surface);border:3px solid var(--ink);
+    box-shadow:var(--pop);padding:13px 15px;
+  }
+  .wod-body.is-live{background:var(--azure);border-color:var(--ink);color:#fff}
+  .wod-div{
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.11em;font-size:10.5px;color:var(--ink-45);
+    margin-bottom:7px;padding-bottom:6px;border-bottom:2px solid var(--ink-15);
+  }
+  .wod-body.is-live .wod-div{color:rgba(255,255,255,.85);
+    border-bottom-color:rgba(255,255,255,.3)}
+  .wod-line{
+    font-family:var(--display);font-weight:600;font-size:16px;line-height:1.34;
+    letter-spacing:.015em;
+  }
+  .wod-line.part{
+    font-weight:700;text-transform:uppercase;font-size:11.5px;
+    letter-spacing:.13em;color:var(--ink-45);margin-top:9px;
+  }
+  .wod-body.is-live .wod-line.part{color:rgba(255,255,255,.82)}
+  .wod-line.prose{
+    font-family:var(--body);font-weight:400;font-size:13.5px;line-height:1.5;
+    margin-top:7px;color:var(--ink-70);
+  }
+  .wod-body.is-live .wod-line.prose{color:rgba(255,255,255,.9)}
+  .wod-note{
+    font-family:var(--body);font-size:12px;color:var(--ink-70);margin-top:9px;
+    padding-left:13px;position:relative;line-height:1.45;
+  }
+  .wod-note::before{content:"*";position:absolute;left:0;color:var(--ink-45)}
+  .wod-link{
+    display:inline-block;margin-top:10px;
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.12em;font-size:10.5px;color:var(--azure-deep);
+    border-bottom:2px solid var(--azure);text-decoration:none;padding-bottom:1px;
+  }
+  .wod-link:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
   /* ---------- arena view ---------- */
   .arena-h{
     display:flex;align-items:center;gap:9px;margin:0 0 10px;
@@ -251,6 +340,10 @@
   }
   .now-arena em{font-style:normal;font-weight:500;font-size:.72em;
     letter-spacing:.11em;color:var(--ink-45);margin-left:.45em}
+  .now-wod{
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.1em;font-size:11px;color:var(--ink-45);margin-top:7px;
+  }
   .slots{display:flex;gap:9px;margin-top:13px}
   .slot{
     flex:1;border:2px solid var(--ink);background:var(--sand);
@@ -344,6 +437,11 @@
     text-transform:uppercase;letter-spacing:.1em;font-size:14px}
   .empty span{display:block;font-size:12.5px;color:var(--ink-70);margin-top:6px}
 
+  .ftlink{
+    display:inline-block;margin-top:9px;color:var(--azure-deep);
+    text-decoration:none;border-bottom:2px solid var(--azure);
+    padding-bottom:1px;letter-spacing:.1em;
+  }
   footer{
     max-width:560px;margin:0 auto;padding:22px var(--gut) 40px;
     border-top:3px solid var(--ink-15);
@@ -394,6 +492,11 @@
   <div class="modes" role="group" aria-label="Schedule view">
     <button class="mode" type="button" id="mode-time" aria-pressed="true">By time</button>
     <button class="mode" type="button" id="mode-arena" aria-pressed="false">By arena</button>
+    <button class="mode" type="button" id="mode-wods" aria-pressed="false">Workouts</button>
+  </div>
+  <div class="picker" id="picker" hidden>
+    <label for="division">Division</label>
+    <select id="division"></select>
   </div>
   <p class="sr" id="srStatus" role="status" aria-live="polite"></p>
   <div id="body"></div>
@@ -401,15 +504,20 @@
 
 <footer>
   OxFit Crew · Beach Brawl '26<br>
-  All times Pensacola Beach local (Central)
+  All times Pensacola Beach local (Central)<br>
+  <a class="ftlink" id="lbLink"
+     href="https://competitioncorner.net/ff/20511/results"
+     target="_blank" rel="noopener">Live leaderboard &rarr;</a>
 </footer>
 
 <script id="schedule-data" type="application/json">__SCHEDULE_JSON__</script>
+<script id="workout-data" type="application/json">__WORKOUTS_JSON__</script>
 <script>
 (function(){
   "use strict";
 
   var DATA = JSON.parse(document.getElementById('schedule-data').textContent);
+  var WODS = JSON.parse(document.getElementById('workout-data').textContent);
   var TZ = DATA.timeZone;
 
   /* ==================================================================
@@ -499,6 +607,72 @@
     var i = DATA.arenas.indexOf(a);
     return i < 0 ? '' : 'a' + i;
   }
+
+  /* ---- workouts -----------------------------------------------------
+     Attached by event number, never by arena name: the heat sheet says
+     "Backout Barbell"/"LRX Beach" where the organisers say "Blackout
+     Barbell"/"LRX". The build cross-checks that the two agree.        */
+  function wodFor(day, eventNo){
+    var set = WODS[day.wodKey];
+    return (set && set[String(eventNo)]) || null;
+  }
+  // Division names are written inconsistently across events — "Teen (16-17)"
+  // in one, "Teen 16-17" in another, and several rolled into a single
+  // "Intermediate/ Masters 40+/ Teens/ Scaled" block. Normalise to compare.
+  function normDiv(x){ return x.toLowerCase().replace(/[^a-z0-9+]/g, ''); }
+  function alphaDiv(x){ return x.toLowerCase().replace(/[^a-z]/g, ''); }
+  function divTokens(name){ return name.split('/').map(function(x){ return x.trim(); })
+    .filter(Boolean); }
+
+  // The event with the most blocks spells out the day's real division list;
+  // the others fold several divisions into one block.
+  function divisionChoices(day){
+    var best = [], set = WODS[day.wodKey] || {};
+    Object.keys(set).forEach(function(k){
+      var toks = [];
+      (set[k].divisions || []).forEach(function(d){
+        divTokens(d.name).forEach(function(t){ toks.push(t); });
+      });
+      if (toks.length > best.length) best = toks;
+    });
+    var seen = {}, out = [];
+    best.forEach(function(t){
+      if (/^all divisions$/i.test(t)) return;
+      var k = normDiv(t);
+      if (!seen[k]) { seen[k] = 1; out.push(t); }
+    });
+    return out;
+  }
+
+  // Exact token match first, then an alphabetic-prefix match so a choice of
+  // "Teen 16-17" still lands in a block labelled "... / Teens / Scaled".
+  function pickDivision(wod, choice){
+    var divs = wod.divisions || [];
+    if (!divs.length) return null;
+    if (!choice) return divs[0];
+    var want = normDiv(choice), wantA = alphaDiv(choice), i, j, toks;
+    for (i = 0; i < divs.length; i++) {
+      toks = divTokens(divs[i].name);
+      for (j = 0; j < toks.length; j++) if (normDiv(toks[j]) === want) return divs[i];
+    }
+    for (i = 0; i < divs.length; i++) {
+      toks = divTokens(divs[i].name);
+      for (j = 0; j < toks.length; j++) {
+        var a = alphaDiv(toks[j]);
+        if (a && wantA && (a.indexOf(wantA) === 0 || wantA.indexOf(a) === 0)) return divs[i];
+      }
+    }
+    return divs[0];
+  }
+
+  function wodTag(day, eventNo){
+    var w = wodFor(day, eventNo);
+    if (!w) return '';
+    var bits = [];
+    if (w.format) bits.push(w.format);
+    if (w.cap) bits.push(w.cap + ' cap');
+    return bits.join(' · ');
+  }
   function esc(s){
     return String(s).replace(/[&<>"]/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
@@ -527,9 +701,11 @@
   }
 
   var selected = null; // null = follow the calendar
-  // 'time' = chronological running order, 'arena' = grouped by event/arena.
-  // Assigned below, outside the pure block the tests extract.
+  // 'time' = chronological running order, 'arena' = grouped by event/arena,
+  // 'wods' = the workouts themselves. Both assigned below, outside the pure
+  // block the tests extract.
   var viewMode = 'time';
+  var division = null;
 
   function classify(day, t){
     var dur = day.heatMinutes * 60000;
@@ -598,6 +774,7 @@
   // grouping answers both "which event" and "which arena".
   function arenaSections(day, c){
     function key(e){ return e.name + '|' + e.eventNo; }
+    /* eslint-disable-next-line no-unused-vars */
     var status = {};
     c.done.forEach(function(r){ status[key(r.e)] = 'is-done'; });
     c.live.forEach(function(r){ status[key(r.e)] = 'is-live'; });
@@ -612,6 +789,8 @@
       return '<section class="sec ' + arenaCls(arena) + '">' +
         '<div class="arena-h"><i>Event ' + (i + 1) + '</i><b>' +
           esc(arena) + '</b></div>' +
+        (wodTag(day, i + 1)
+          ? '<div class="tagline">' + esc(wodTag(day, i + 1)) + '</div>' : '') +
         rows.map(function(e){
           var st = status[key(e)] || '';
           var tag = st === 'is-live' ? '<span class="tag">Now</span>'
@@ -650,6 +829,75 @@
     if (msg === lastSaid) return;
     lastSaid = msg;
     document.getElementById('srStatus').textContent = msg;
+  }
+
+  // Partner/segment headings inside a workout are labels, not reps.
+  function wodLineCls(line){
+    if (/^partner\b|^then partner|^\d+:\d{2}\s+to\s+\d+:\d{2}|^\d+:\d{2} transition/i.test(line))
+      return 'part';
+    if (line.length > 64) return 'prose';
+    return '';
+  }
+
+  function workoutSections(day, c, t){
+    var liveEvents = {};
+    c.live.forEach(function(r){ liveEvents[r.e.eventNo] = 1; });
+    var nextEvents = {};
+    c.next.forEach(function(r){ nextEvents[r.e.eventNo] = 1; });
+
+    return DATA.arenas.map(function(arena, i){
+      var no = i + 1, w = wodFor(day, no);
+      if (!w) return '';
+      var div = pickDivision(w, division);
+      var mine = day.entries.filter(function(e){ return e.eventNo === no; })
+        .sort(function(a, b){ return a.startSec - b.startSec; });
+      var when = mine.length
+        ? mine[0].time + (mine.length > 1 ? '–' + mine[mine.length - 1].time : '')
+        : '';
+      var state = liveEvents[no] ? ' is-live' : '';
+      var badge = liveEvents[no] ? '<span class="tag">Now</span>'
+                : nextEvents[no] ? '<span class="tag">Next</span>' : '';
+
+      return '<section class="wod ' + arenaCls(arena) + '">' +
+        '<div class="wod-h"><i>Event ' + no + '</i><b>' + esc(arena) + '</b>' +
+          badge + (when ? '<span class="when num">' + esc(when) + '</span>' : '') +
+        '</div>' +
+        '<div class="tagline">' + (w.format ? '<em>' + esc(w.format) + '</em>' : '') +
+          (w.cap ? (w.format ? ' · ' : '') + esc(w.cap) + ' cap' : '') + '</div>' +
+        '<div class="wod-body' + state + '">' +
+          (div ? '<div class="wod-div">' + esc(div.name) + '</div>' : '') +
+          (div ? div.lines.map(function(l){
+            return '<div class="wod-line ' + wodLineCls(l) + '">' + esc(l) + '</div>';
+          }).join('') : '') +
+          (w.notes || []).map(function(n){
+            return '<div class="wod-note">' + esc(n) + '</div>';
+          }).join('') +
+        '</div>' +
+        '<a class="wod-link" href="' + esc(w.url) + '" target="_blank" ' +
+          'rel="noopener">Flow &amp; movement standards &rarr;</a>' +
+      '</section>';
+    }).join('');
+  }
+
+  // The division list differs by day (individuals have Elite/Masters/Teen
+  // tiers that teams do not), so the picker is rebuilt when the day changes.
+  var pickerDay = null;
+  function syncPicker(day){
+    document.getElementById('picker').hidden = viewMode !== 'wods';
+    if (pickerDay === day.id) return;
+    pickerDay = day.id;
+    var sel = document.getElementById('division');
+    var choices = divisionChoices(day);
+    sel.innerHTML = choices.map(function(c){
+      return '<option>' + esc(c) + '</option>';
+    }).join('');
+    var keep = division && choices.filter(function(c){
+      return normDiv(c) === normDiv(division);
+    })[0];
+    division = keep ||
+      choices.filter(function(c){ return /^rx$/i.test(c); })[0] ||
+      choices[0] || null;
+    if (division) sel.value = division;
   }
 
   function render(){
@@ -736,6 +984,8 @@
               '<div class="now-name">' + esc(r.e.name) + '</div>' +
               '<div class="now-arena">' + esc(r.e.arena) +
                 '<em>Event ' + r.e.eventNo + '</em></div>' +
+              (wodTag(day, r.e.eventNo)
+                ? '<div class="now-wod">' + esc(wodTag(day, r.e.eventNo)) + '</div>' : '') +
               '<div class="slots">' +
                 '<div class="slot"><i>Heat</i><b class="num">' + r.e.heat + '</b></div>' +
                 '<div class="slot"><i>Lane</i><b class="num">' + r.e.lane + '</b></div>' +
@@ -772,14 +1022,17 @@
       }
     }
 
-    document.getElementById('mode-time')
-      .setAttribute('aria-pressed', String(viewMode === 'time'));
-    document.getElementById('mode-arena')
-      .setAttribute('aria-pressed', String(viewMode === 'arena'));
+    ['time','arena','wods'].forEach(function(m){
+      document.getElementById('mode-' + m)
+        .setAttribute('aria-pressed', String(viewMode === m));
+    });
+    syncPicker(day);
 
-    if (!chrono) {
+    if (viewMode === 'arena') {
       out.push(arenaSections(day, c));
       out.push(tbdHTML(day));
+    } else if (viewMode === 'wods') {
+      out.push(workoutSections(day, c, t));
     }
 
     paint(out.join(''));
@@ -797,9 +1050,17 @@
   // every access is guarded and the page renders fine without it.
   try {
     var saved = localStorage.getItem('bb26-view');
-    if (saved === 'arena' || saved === 'time') viewMode = saved;
+    if (saved === 'arena' || saved === 'time' || saved === 'wods') viewMode = saved;
+    var savedDiv = localStorage.getItem('bb26-division');
+    if (savedDiv) division = savedDiv;
   } catch (err) {}
-  [['mode-time','time'], ['mode-arena','arena']].forEach(function(pair){
+
+  document.getElementById('division').addEventListener('change', function(){
+    division = this.value;
+    try { localStorage.setItem('bb26-division', division); } catch (err) {}
+    render();
+  });
+  [['mode-time','time'], ['mode-arena','arena'], ['mode-wods','wods']].forEach(function(pair){
     document.getElementById(pair[0]).addEventListener('click', function(){
       viewMode = pair[1];
       try { localStorage.setItem('bb26-view', viewMode); } catch (err) {}

@@ -12,6 +12,7 @@ const assert = require('assert');
 const ROOT = path.join(__dirname, '..');
 const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/schedule.json'), 'utf8'));
+const wods = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/workouts.json'), 'utf8'));
 
 // --- extract the DOM-free portions of the engine -------------------------
 // Two windows: the time engine, and the arena-view builder (which needs only
@@ -37,13 +38,13 @@ assert.ok(!/localStorage/.test(src),
 assert.ok(!/document\./.test(src),
   'extracted block must stay DOM-free: document access leaked back in');
 
-const sandbox = { DATA: data, TZ: data.timeZone, location: { search: '' }, document: null };
 const engine = new Function(
-  'DATA', 'TZ', 'location',
-  src + '\nreturn {wallToEpoch,venueParts,venueDateISO,venueOffset,classify,dayBounds,autoDay,fmtClock,fmtDur,fmtMins,DAYS,arenaSections,arenaCls};'
-)(sandbox.DATA, sandbox.TZ, sandbox.location);
+  'DATA', 'WODS', 'TZ', 'location',
+  src + '\nreturn {wallToEpoch,venueParts,venueDateISO,venueOffset,classify,dayBounds,autoDay,fmtClock,fmtDur,fmtMins,DAYS,arenaSections,arenaCls,wodFor,pickDivision,divisionChoices,wodTag,normDiv};'
+)(data, wods, data.timeZone, { search: '' });
 
-const { wallToEpoch, venueDateISO, venueOffset, classify, dayBounds, autoDay, fmtClock, fmtDur, DAYS, arenaSections, arenaCls } = engine;
+const { wallToEpoch, venueDateISO, venueOffset, classify, dayBounds, autoDay, fmtClock, fmtDur, DAYS,
+        arenaSections, arenaCls, wodFor, pickDivision, divisionChoices, wodTag, normDiv } = engine;
 
 let pass = 0, fail = 0;
 function t(name, fn) {
@@ -258,6 +259,68 @@ t('before the first heat nothing is marked done', () => {
   const html = arenaSections(SAT, classify(SAT, at(SAT, '7:00')));
   assert.ok(!html.includes('is-done'));
   assert.strictEqual((html.match(/class="tag">Next</g) || []).length, 3);
+});
+
+console.log('\nworkouts');
+t('every event on both days has a workout attached', () => {
+  for (const day of [SAT, SUN]) {
+    for (let n = 1; n <= 4; n++) {
+      const w = wodFor(day, n);
+      assert.ok(w, `${day.id} event ${n} has no workout`);
+      assert.ok(w.cap, `${day.id} event ${n} has no time cap`);
+      assert.ok(w.divisions.length, `${day.id} event ${n} has no divisions`);
+    }
+  }
+});
+t('workout arenas agree with the heat sheet, despite the spellings', () => {
+  // Sheet: "Backout Barbell" / "LRX Beach".  Site: "Blackout Barbell" / "LRX".
+  const kw = { 1: 'barbell', 2: 'mayhem', 3: 'lrx', 4: 'apparel' };
+  for (const day of [SAT, SUN]) {
+    for (let n = 1; n <= 4; n++) {
+      assert.ok(wodFor(day, n).arena.toLowerCase().includes(kw[n]));
+      const sheet = day.entries.find(e => e.eventNo === n).arena.toLowerCase();
+      assert.ok(sheet.includes(kw[n]));
+    }
+  }
+});
+t('division choices come from the most granular event', () => {
+  assert.deepStrictEqual(divisionChoices(SAT).map(normDiv),
+    ['elite', 'rx', 'intermediate', 'masters40+', 'masters50+', 'scaled', 'teen1617', 'teen1415']);
+  assert.deepStrictEqual(divisionChoices(SUN).map(normDiv),
+    ['rx', 'intermediate', 'masters40+', 'scaled']);
+});
+t('RX picks the RX loads, not Elite', () => {
+  const d = pickDivision(wodFor(SAT, 1), 'RX');
+  assert.strictEqual(d.name, 'RX');
+  assert.ok(d.lines.some(l => l.includes('(135/95)')));
+  assert.ok(!d.lines.some(l => l.includes('(155/105)')));
+});
+t('Masters 50+ is not confused with Masters 40+', () => {
+  const d = pickDivision(wodFor(SAT, 1), 'Masters 50+');
+  assert.strictEqual(d.name, 'Masters 50+');
+  const d40 = pickDivision(wodFor(SAT, 1), 'Masters 40+');
+  assert.strictEqual(d40.name, 'Intermediate/ Masters 40+');
+});
+t('a choice with no block of its own falls into the combined block', () => {
+  // Event 3 rolls everything below RX into one block including "Teens".
+  const d = pickDivision(wodFor(SAT, 3), 'Teen (16-17)');
+  assert.ok(/teens/i.test(d.name), 'expected the combined block, got ' + d.name);
+  assert.ok(d.lines.some(l => l.includes('(80/50)')));
+});
+t('every division choice resolves on every event of its day', () => {
+  for (const day of [SAT, SUN]) {
+    for (const choice of divisionChoices(day)) {
+      for (let n = 1; n <= 4; n++) {
+        const d = pickDivision(wodFor(day, n), choice);
+        assert.ok(d && d.lines.length, `${day.id} event ${n} / ${choice}`);
+      }
+    }
+  }
+});
+t('the tag line reads format then cap', () => {
+  assert.strictEqual(wodTag(SAT, 1), 'For Time · 12:00 cap');
+  assert.strictEqual(wodTag(SAT, 2), '3 Rounds for time · 12:00 cap');
+  assert.strictEqual(wodTag(SUN, 4), 'For max weight · 13:00 cap');
 });
 
 console.log('\nduration formatting');

@@ -15,6 +15,7 @@
       "date": "2026-09-26",
       "division": "Individuals",
       "heatMinutes": 15,
+      "wodKey": "individual",
       "entries": [
         {
           "name": "Caitlyn Livingston",
@@ -353,6 +354,7 @@
       "date": "2026-09-27",
       "division": "Teams",
       "heatMinutes": 17,
+      "wodKey": "team",
       "entries": [
         {
           "name": "Ox Mommies",

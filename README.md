@@ -19,14 +19,17 @@ beach-brawl/
 ├── src/index.template.html ← the real source
 ├── data/
 │   ├── heat-sheet.csv      ← source of truth, as received
-│   └── schedule.json       ← generated from the CSV
-├── build-data.py           ← CSV → schedule.json → index.html
+│   ├── schedule.json       ← generated from the CSV
+│   └── workouts.json       ← scraped from pensacolabeachbrawl.com
+├── build-workouts.py       ← scrapes the 8 workout pages → workouts.json
+├── build-data.py           ← CSV + workouts.json → index.html
 └── test/time-engine.test.js
 ```
 
 ## Build
 
 ```sh
+python3 build-workouts.py    # only when the organisers change a workout
 python3 build-data.py        # transcribe, verify, and inject into index.html
 node test/time-engine.test.js
 ```
@@ -55,6 +58,40 @@ the weekend:
 ?now=2026-09-27T13:20   Sunday teams, mid-heat
 ?now=2026-09-27T18:00   weekend complete
 ```
+
+## Workouts
+
+Each event's workout is scraped from its page on pensacolabeachbrawl.com —
+format, time cap, the movements for every division, and any event notes.
+Movement standards run to thousands of words and are deliberately not
+captured; each workout links out to the official write-up instead.
+
+**Workouts attach by event number, never by arena name.** The heat sheet and
+the organisers' site disagree on two spellings:
+
+| Event | Heat sheet | Organisers' site |
+|---|---|---|
+| 1 | Backout Barbell Arena | Bl**a**ckout Barbell Arena |
+| 3 | LRX **Beach** Arena | LRX Arena |
+
+The board shows the heat sheet's spelling, per the data-fidelity rule below.
+`build-data.py` cross-checks that both sources agree on which arena each
+event number refers to, and refuses to build if they ever diverge.
+
+Division names are written inconsistently across events — `Teen (16-17)` in
+one, `Teen 16-17` in another, and several folded into a single
+`Intermediate/ Masters 40+/ Teens/ Scaled` block. The picker offers the
+divisions from whichever event spells out the most, and matching falls back
+from an exact token match to an alphabetic-prefix match so every division
+resolves on every event.
+
+## Results
+
+Not integrated, and not currently possible. The Competition Corner
+leaderboard is an Angular app that fetches its data at runtime, and this
+board is a static page on GitHub Pages — a browser fetch to their API from
+another origin would be blocked by CORS even if the endpoint were public.
+The footer links out to the live leaderboard instead.
 
 ## Data fidelity
 

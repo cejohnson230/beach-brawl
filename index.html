@@ -163,6 +163,95 @@
   .mode[aria-pressed="true"]{background:var(--ink);color:var(--sand)}
   .mode:focus-visible{outline:3px solid var(--azure);outline-offset:-4px}
 
+  /* ---------- division picker ---------- */
+  /* display:flex would otherwise beat the [hidden] attribute, leaving the
+     picker on screen in every view. */
+  .picker[hidden]{display:none}
+  .picker{
+    display:flex;align-items:center;gap:10px;margin:0 0 20px;
+    border:3px solid var(--ink);background:var(--surface);
+    box-shadow:var(--pop-sm);padding:9px 11px;
+  }
+  .picker label{
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.14em;font-size:10.5px;color:var(--ink-45);flex:none;
+  }
+  .picker select{
+    flex:1;min-width:0;appearance:none;cursor:pointer;
+    background:transparent;border:0;color:var(--ink);
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.05em;font-size:16px;padding:2px 18px 2px 0;
+    background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),
+                     linear-gradient(135deg,var(--ink) 50%,transparent 50%);
+    background-position:calc(100% - 9px) 55%, calc(100% - 4px) 55%;
+    background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+  }
+  .picker select:focus-visible{outline:3px solid var(--azure);outline-offset:3px}
+
+  /* ---------- workouts ---------- */
+  .wod{margin:0 0 24px}
+  .wod-h{
+    display:flex;align-items:center;gap:9px;margin-bottom:8px;
+    border-bottom:3px solid var(--ac,var(--ink));padding-bottom:7px;
+  }
+  .wod-h i{
+    font-style:normal;flex:none;font-family:var(--display);font-weight:700;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#fff;
+    background:var(--acd,var(--ink));padding:4px 7px 3px;
+  }
+  .wod-h b{
+    flex:1;min-width:0;font-family:var(--display);font-weight:700;
+    text-transform:uppercase;letter-spacing:.04em;
+    font-size:clamp(15px,4.3vw,18px);line-height:1.1;color:var(--acd,var(--ink));
+  }
+  .wod-h .when{
+    flex:none;font-family:var(--display);font-weight:700;font-size:13px;
+    letter-spacing:.03em;color:var(--ink-45);
+  }
+  .tagline{
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.11em;font-size:11px;color:var(--ink-45);margin-bottom:9px;
+  }
+  .tagline em{font-style:normal;color:var(--acd,var(--ink))}
+  .wod-body{
+    background:var(--surface);border:3px solid var(--ink);
+    box-shadow:var(--pop);padding:13px 15px;
+  }
+  .wod-body.is-live{background:var(--azure);border-color:var(--ink);color:#fff}
+  .wod-div{
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.11em;font-size:10.5px;color:var(--ink-45);
+    margin-bottom:7px;padding-bottom:6px;border-bottom:2px solid var(--ink-15);
+  }
+  .wod-body.is-live .wod-div{color:rgba(255,255,255,.85);
+    border-bottom-color:rgba(255,255,255,.3)}
+  .wod-line{
+    font-family:var(--display);font-weight:600;font-size:16px;line-height:1.34;
+    letter-spacing:.015em;
+  }
+  .wod-line.part{
+    font-weight:700;text-transform:uppercase;font-size:11.5px;
+    letter-spacing:.13em;color:var(--ink-45);margin-top:9px;
+  }
+  .wod-body.is-live .wod-line.part{color:rgba(255,255,255,.82)}
+  .wod-line.prose{
+    font-family:var(--body);font-weight:400;font-size:13.5px;line-height:1.5;
+    margin-top:7px;color:var(--ink-70);
+  }
+  .wod-body.is-live .wod-line.prose{color:rgba(255,255,255,.9)}
+  .wod-note{
+    font-family:var(--body);font-size:12px;color:var(--ink-70);margin-top:9px;
+    padding-left:13px;position:relative;line-height:1.45;
+  }
+  .wod-note::before{content:"*";position:absolute;left:0;color:var(--ink-45)}
+  .wod-link{
+    display:inline-block;margin-top:10px;
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.12em;font-size:10.5px;color:var(--azure-deep);
+    border-bottom:2px solid var(--azure);text-decoration:none;padding-bottom:1px;
+  }
+  .wod-link:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
   /* ---------- arena view ---------- */
   .arena-h{
     display:flex;align-items:center;gap:9px;margin:0 0 10px;
@@ -251,6 +340,10 @@
   }
   .now-arena em{font-style:normal;font-weight:500;font-size:.72em;
     letter-spacing:.11em;color:var(--ink-45);margin-left:.45em}
+  .now-wod{
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.1em;font-size:11px;color:var(--ink-45);margin-top:7px;
+  }
   .slots{display:flex;gap:9px;margin-top:13px}
   .slot{
     flex:1;border:2px solid var(--ink);background:var(--sand);
@@ -344,6 +437,11 @@
     text-transform:uppercase;letter-spacing:.1em;font-size:14px}
   .empty span{display:block;font-size:12.5px;color:var(--ink-70);margin-top:6px}
 
+  .ftlink{
+    display:inline-block;margin-top:9px;color:var(--azure-deep);
+    text-decoration:none;border-bottom:2px solid var(--azure);
+    padding-bottom:1px;letter-spacing:.1em;
+  }
   footer{
     max-width:560px;margin:0 auto;padding:22px var(--gut) 40px;
     border-top:3px solid var(--ink-15);
@@ -394,6 +492,11 @@
   <div class="modes" role="group" aria-label="Schedule view">
     <button class="mode" type="button" id="mode-time" aria-pressed="true">By time</button>
     <button class="mode" type="button" id="mode-arena" aria-pressed="false">By arena</button>
+    <button class="mode" type="button" id="mode-wods" aria-pressed="false">Workouts</button>
+  </div>
+  <div class="picker" id="picker" hidden>
+    <label for="division">Division</label>
+    <select id="division"></select>
   </div>
   <p class="sr" id="srStatus" role="status" aria-live="polite"></p>
   <div id="body"></div>
@@ -401,15 +504,20 @@
 
 <footer>
   OxFit Crew · Beach Brawl '26<br>
-  All times Pensacola Beach local (Central)
+  All times Pensacola Beach local (Central)<br>
+  <a class="ftlink" id="lbLink"
+     href="https://competitioncorner.net/ff/20511/results"
+     target="_blank" rel="noopener">Live leaderboard &rarr;</a>
 </footer>
 
-<script id="schedule-data" type="application/json">{"event":"Beach Brawl '26","venue":"Pensacola Beach, FL","timeZone":"America/Chicago","arenas":["Backout Barbell Arena","Mayhem Athlete Arena","LRX Beach Arena","PR Apparel Arena"],"days":[{"id":"saturday","label":"Saturday","date":"2026-09-26","division":"Individuals","heatMinutes":15,"entries":[{"name":"Caitlyn Livingston","arena":"LRX Beach Arena","eventNo":3,"time":"8:15 AM","startSec":29700,"heat":2,"lane":7},{"name":"Debbie Allen","arena":"PR Apparel Arena","eventNo":4,"time":"8:15 AM","startSec":29700,"heat":2,"lane":5},{"name":"Kelsey Graham","arena":"LRX Beach Arena","eventNo":3,"time":"8:15 AM","startSec":29700,"heat":2,"lane":6},{"name":"Caryn Ligon","arena":"LRX Beach Arena","eventNo":3,"time":"8:30 AM","startSec":30600,"heat":3,"lane":8},{"name":"Nick Stanley","arena":"LRX Beach Arena","eventNo":3,"time":"9:15 AM","startSec":33300,"heat":6,"lane":3},{"name":"Ant Oxley","arena":"Backout Barbell Arena","eventNo":1,"time":"9:30 AM","startSec":34200,"heat":7,"lane":5},{"name":"Bailey Barnard","arena":"LRX Beach Arena","eventNo":3,"time":"9:30 AM","startSec":34200,"heat":7,"lane":5},{"name":"Keith Caldwell","arena":"LRX Beach Arena","eventNo":3,"time":"9:30 AM","startSec":34200,"heat":7,"lane":6},{"name":"Adam Morgan","arena":"Backout Barbell Arena","eventNo":1,"time":"9:45 AM","startSec":35100,"heat":8,"lane":4},{"name":"Caitlyn Livingston","arena":"PR Apparel Arena","eventNo":4,"time":"10:35 AM","startSec":38100,"heat":10,"lane":7},{"name":"Debbie Allen","arena":"Backout Barbell Arena","eventNo":1,"time":"10:35 AM","startSec":38100,"heat":10,"lane":5},{"name":"Kelsey Graham","arena":"PR Apparel Arena","eventNo":4,"time":"10:35 AM","startSec":38100,"heat":10,"lane":6},{"name":"Caryn Ligon","arena":"PR Apparel Arena","eventNo":4,"time":"10:50 AM","startSec":39000,"heat":11,"lane":8},{"name":"Nick Stanley","arena":"PR Apparel Arena","eventNo":4,"time":"11:35 AM","startSec":41700,"heat":14,"lane":3},{"name":"Ant Oxley","arena":"Mayhem Athlete Arena","eventNo":2,"time":"11:50 AM","startSec":42600,"heat":15,"lane":5},{"name":"Bailey Barnard","arena":"PR Apparel Arena","eventNo":4,"time":"11:50 AM","startSec":42600,"heat":15,"lane":5},{"name":"Keith Caldwell","arena":"PR Apparel Arena","eventNo":4,"time":"11:50 AM","startSec":42600,"heat":15,"lane":6},{"name":"Adam Morgan","arena":"Mayhem Athlete Arena","eventNo":2,"time":"12:05 PM","startSec":43500,"heat":16,"lane":4},{"name":"Caitlyn Livingston","arena":"Backout Barbell Arena","eventNo":1,"time":"1:15 PM","startSec":47700,"heat":18,"lane":7},{"name":"Debbie Allen","arena":"Mayhem Athlete Arena","eventNo":2,"time":"1:15 PM","startSec":47700,"heat":18,"lane":5},{"name":"Kelsey Graham","arena":"Backout Barbell Arena","eventNo":1,"time":"1:15 PM","startSec":47700,"heat":18,"lane":6},{"name":"Caryn Ligon","arena":"Backout Barbell Arena","eventNo":1,"time":"1:30 PM","startSec":48600,"heat":19,"lane":8},{"name":"Nick Stanley","arena":"Backout Barbell Arena","eventNo":1,"time":"2:15 PM","startSec":51300,"heat":22,"lane":3},{"name":"Ant Oxley","arena":"LRX Beach Arena","eventNo":3,"time":"2:30 PM","startSec":52200,"heat":23,"lane":5},{"name":"Bailey Barnard","arena":"Backout Barbell Arena","eventNo":1,"time":"2:30 PM","startSec":52200,"heat":23,"lane":5},{"name":"Keith Caldwell","arena":"Backout Barbell Arena","eventNo":1,"time":"2:30 PM","startSec":52200,"heat":23,"lane":6},{"name":"Adam Morgan","arena":"LRX Beach Arena","eventNo":3,"time":"2:45 PM","startSec":53100,"heat":24,"lane":4},{"name":"Caitlyn Livingston","arena":"Mayhem Athlete Arena","eventNo":2,"time":"3:45 PM","startSec":56700,"heat":26,"lane":7},{"name":"Debbie Allen","arena":"LRX Beach Arena","eventNo":3,"time":"3:45 PM","startSec":56700,"heat":26,"lane":5},{"name":"Kelsey Graham","arena":"Mayhem Athlete Arena","eventNo":2,"time":"3:45 PM","startSec":56700,"heat":26,"lane":6},{"name":"Caryn Ligon","arena":"Mayhem Athlete Arena","eventNo":2,"time":"4:00 PM","startSec":57600,"heat":27,"lane":8},{"name":"Nick Stanley","arena":"Mayhem Athlete Arena","eventNo":2,"time":"4:45 PM","startSec":60300,"heat":30,"lane":3},{"name":"Ant Oxley","arena":"PR Apparel Arena","eventNo":4,"time":"5:00 PM","startSec":61200,"heat":31,"lane":5},{"name":"Bailey Barnard","arena":"Mayhem Athlete Arena","eventNo":2,"time":"5:00 PM","startSec":61200,"heat":31,"lane":5},{"name":"Keith Caldwell","arena":"Mayhem Athlete Arena","eventNo":2,"time":"5:00 PM","startSec":61200,"heat":31,"lane":6},{"name":"Adam Morgan","arena":"PR Apparel Arena","eventNo":4,"time":"5:15 PM","startSec":62100,"heat":32,"lane":4}],"tbd":["Savannah Branch","Whitney Dunn"],"heatCount":20},{"id":"sunday","label":"Sunday","date":"2026-09-27","division":"Teams","heatMinutes":17,"entries":[{"name":"Ox Mommies","arena":"PR Apparel Arena","eventNo":4,"time":"8:00 AM","startSec":28800,"heat":1,"lane":2},{"name":"OxFit Average Bros","arena":"Backout Barbell Arena","eventNo":1,"time":"8:17 AM","startSec":29820,"heat":2,"lane":1},{"name":"OxFit Bad Moms","arena":"LRX Beach Arena","eventNo":3,"time":"8:51 AM","startSec":31860,"heat":4,"lane":2},{"name":"OxFit Black","arena":"PR Apparel Arena","eventNo":4,"time":"9:08 AM","startSec":32880,"heat":5,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"PR Apparel Arena","eventNo":4,"time":"9:25 AM","startSec":33900,"heat":6,"lane":8},{"name":"Ox Mommies","arena":"Backout Barbell Arena","eventNo":1,"time":"10:20 AM","startSec":37200,"heat":8,"lane":2},{"name":"OxFit Average Bros","arena":"Mayhem Athlete Arena","eventNo":2,"time":"10:37 AM","startSec":38220,"heat":9,"lane":1},{"name":"OxFit Bad Moms","arena":"PR Apparel Arena","eventNo":4,"time":"11:11 AM","startSec":40260,"heat":11,"lane":2},{"name":"OxFit Black","arena":"Backout Barbell Arena","eventNo":1,"time":"11:28 AM","startSec":41280,"heat":12,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"Backout Barbell Arena","eventNo":1,"time":"11:45 AM","startSec":42300,"heat":13,"lane":8},{"name":"Ox Mommies","arena":"Mayhem Athlete Arena","eventNo":2,"time":"1:00 PM","startSec":46800,"heat":15,"lane":2},{"name":"OxFit Average Bros","arena":"LRX Beach Arena","eventNo":3,"time":"1:17 PM","startSec":47820,"heat":16,"lane":2},{"name":"OxFit Bad Moms","arena":"Backout Barbell Arena","eventNo":1,"time":"1:51 PM","startSec":49860,"heat":18,"lane":2},{"name":"OxFit Black","arena":"Mayhem Athlete Arena","eventNo":2,"time":"2:08 PM","startSec":50880,"heat":19,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"Mayhem Athlete Arena","eventNo":2,"time":"2:25 PM","startSec":51900,"heat":20,"lane":8},{"name":"Ox Mommies","arena":"LRX Beach Arena","eventNo":3,"time":"3:30 PM","startSec":55800,"heat":22,"lane":2},{"name":"OxFit Average Bros","arena":"PR Apparel Arena","eventNo":4,"time":"3:47 PM","startSec":56820,"heat":23,"lane":1},{"name":"OxFit Bad Moms","arena":"Mayhem Athlete Arena","eventNo":2,"time":"4:21 PM","startSec":58860,"heat":25,"lane":2},{"name":"OxFit Black","arena":"LRX Beach Arena","eventNo":3,"time":"4:38 PM","startSec":59880,"heat":26,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"LRX Beach Arena","eventNo":3,"time":"4:55 PM","startSec":60900,"heat":27,"lane":8}],"tbd":[],"heatCount":20}]}</script>
+<script id="schedule-data" type="application/json">{"event":"Beach Brawl '26","venue":"Pensacola Beach, FL","timeZone":"America/Chicago","arenas":["Backout Barbell Arena","Mayhem Athlete Arena","LRX Beach Arena","PR Apparel Arena"],"days":[{"id":"saturday","label":"Saturday","date":"2026-09-26","division":"Individuals","heatMinutes":15,"wodKey":"individual","entries":[{"name":"Caitlyn Livingston","arena":"LRX Beach Arena","eventNo":3,"time":"8:15 AM","startSec":29700,"heat":2,"lane":7},{"name":"Debbie Allen","arena":"PR Apparel Arena","eventNo":4,"time":"8:15 AM","startSec":29700,"heat":2,"lane":5},{"name":"Kelsey Graham","arena":"LRX Beach Arena","eventNo":3,"time":"8:15 AM","startSec":29700,"heat":2,"lane":6},{"name":"Caryn Ligon","arena":"LRX Beach Arena","eventNo":3,"time":"8:30 AM","startSec":30600,"heat":3,"lane":8},{"name":"Nick Stanley","arena":"LRX Beach Arena","eventNo":3,"time":"9:15 AM","startSec":33300,"heat":6,"lane":3},{"name":"Ant Oxley","arena":"Backout Barbell Arena","eventNo":1,"time":"9:30 AM","startSec":34200,"heat":7,"lane":5},{"name":"Bailey Barnard","arena":"LRX Beach Arena","eventNo":3,"time":"9:30 AM","startSec":34200,"heat":7,"lane":5},{"name":"Keith Caldwell","arena":"LRX Beach Arena","eventNo":3,"time":"9:30 AM","startSec":34200,"heat":7,"lane":6},{"name":"Adam Morgan","arena":"Backout Barbell Arena","eventNo":1,"time":"9:45 AM","startSec":35100,"heat":8,"lane":4},{"name":"Caitlyn Livingston","arena":"PR Apparel Arena","eventNo":4,"time":"10:35 AM","startSec":38100,"heat":10,"lane":7},{"name":"Debbie Allen","arena":"Backout Barbell Arena","eventNo":1,"time":"10:35 AM","startSec":38100,"heat":10,"lane":5},{"name":"Kelsey Graham","arena":"PR Apparel Arena","eventNo":4,"time":"10:35 AM","startSec":38100,"heat":10,"lane":6},{"name":"Caryn Ligon","arena":"PR Apparel Arena","eventNo":4,"time":"10:50 AM","startSec":39000,"heat":11,"lane":8},{"name":"Nick Stanley","arena":"PR Apparel Arena","eventNo":4,"time":"11:35 AM","startSec":41700,"heat":14,"lane":3},{"name":"Ant Oxley","arena":"Mayhem Athlete Arena","eventNo":2,"time":"11:50 AM","startSec":42600,"heat":15,"lane":5},{"name":"Bailey Barnard","arena":"PR Apparel Arena","eventNo":4,"time":"11:50 AM","startSec":42600,"heat":15,"lane":5},{"name":"Keith Caldwell","arena":"PR Apparel Arena","eventNo":4,"time":"11:50 AM","startSec":42600,"heat":15,"lane":6},{"name":"Adam Morgan","arena":"Mayhem Athlete Arena","eventNo":2,"time":"12:05 PM","startSec":43500,"heat":16,"lane":4},{"name":"Caitlyn Livingston","arena":"Backout Barbell Arena","eventNo":1,"time":"1:15 PM","startSec":47700,"heat":18,"lane":7},{"name":"Debbie Allen","arena":"Mayhem Athlete Arena","eventNo":2,"time":"1:15 PM","startSec":47700,"heat":18,"lane":5},{"name":"Kelsey Graham","arena":"Backout Barbell Arena","eventNo":1,"time":"1:15 PM","startSec":47700,"heat":18,"lane":6},{"name":"Caryn Ligon","arena":"Backout Barbell Arena","eventNo":1,"time":"1:30 PM","startSec":48600,"heat":19,"lane":8},{"name":"Nick Stanley","arena":"Backout Barbell Arena","eventNo":1,"time":"2:15 PM","startSec":51300,"heat":22,"lane":3},{"name":"Ant Oxley","arena":"LRX Beach Arena","eventNo":3,"time":"2:30 PM","startSec":52200,"heat":23,"lane":5},{"name":"Bailey Barnard","arena":"Backout Barbell Arena","eventNo":1,"time":"2:30 PM","startSec":52200,"heat":23,"lane":5},{"name":"Keith Caldwell","arena":"Backout Barbell Arena","eventNo":1,"time":"2:30 PM","startSec":52200,"heat":23,"lane":6},{"name":"Adam Morgan","arena":"LRX Beach Arena","eventNo":3,"time":"2:45 PM","startSec":53100,"heat":24,"lane":4},{"name":"Caitlyn Livingston","arena":"Mayhem Athlete Arena","eventNo":2,"time":"3:45 PM","startSec":56700,"heat":26,"lane":7},{"name":"Debbie Allen","arena":"LRX Beach Arena","eventNo":3,"time":"3:45 PM","startSec":56700,"heat":26,"lane":5},{"name":"Kelsey Graham","arena":"Mayhem Athlete Arena","eventNo":2,"time":"3:45 PM","startSec":56700,"heat":26,"lane":6},{"name":"Caryn Ligon","arena":"Mayhem Athlete Arena","eventNo":2,"time":"4:00 PM","startSec":57600,"heat":27,"lane":8},{"name":"Nick Stanley","arena":"Mayhem Athlete Arena","eventNo":2,"time":"4:45 PM","startSec":60300,"heat":30,"lane":3},{"name":"Ant Oxley","arena":"PR Apparel Arena","eventNo":4,"time":"5:00 PM","startSec":61200,"heat":31,"lane":5},{"name":"Bailey Barnard","arena":"Mayhem Athlete Arena","eventNo":2,"time":"5:00 PM","startSec":61200,"heat":31,"lane":5},{"name":"Keith Caldwell","arena":"Mayhem Athlete Arena","eventNo":2,"time":"5:00 PM","startSec":61200,"heat":31,"lane":6},{"name":"Adam Morgan","arena":"PR Apparel Arena","eventNo":4,"time":"5:15 PM","startSec":62100,"heat":32,"lane":4}],"tbd":["Savannah Branch","Whitney Dunn"],"heatCount":20},{"id":"sunday","label":"Sunday","date":"2026-09-27","division":"Teams","heatMinutes":17,"wodKey":"team","entries":[{"name":"Ox Mommies","arena":"PR Apparel Arena","eventNo":4,"time":"8:00 AM","startSec":28800,"heat":1,"lane":2},{"name":"OxFit Average Bros","arena":"Backout Barbell Arena","eventNo":1,"time":"8:17 AM","startSec":29820,"heat":2,"lane":1},{"name":"OxFit Bad Moms","arena":"LRX Beach Arena","eventNo":3,"time":"8:51 AM","startSec":31860,"heat":4,"lane":2},{"name":"OxFit Black","arena":"PR Apparel Arena","eventNo":4,"time":"9:08 AM","startSec":32880,"heat":5,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"PR Apparel Arena","eventNo":4,"time":"9:25 AM","startSec":33900,"heat":6,"lane":8},{"name":"Ox Mommies","arena":"Backout Barbell Arena","eventNo":1,"time":"10:20 AM","startSec":37200,"heat":8,"lane":2},{"name":"OxFit Average Bros","arena":"Mayhem Athlete Arena","eventNo":2,"time":"10:37 AM","startSec":38220,"heat":9,"lane":1},{"name":"OxFit Bad Moms","arena":"PR Apparel Arena","eventNo":4,"time":"11:11 AM","startSec":40260,"heat":11,"lane":2},{"name":"OxFit Black","arena":"Backout Barbell Arena","eventNo":1,"time":"11:28 AM","startSec":41280,"heat":12,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"Backout Barbell Arena","eventNo":1,"time":"11:45 AM","startSec":42300,"heat":13,"lane":8},{"name":"Ox Mommies","arena":"Mayhem Athlete Arena","eventNo":2,"time":"1:00 PM","startSec":46800,"heat":15,"lane":2},{"name":"OxFit Average Bros","arena":"LRX Beach Arena","eventNo":3,"time":"1:17 PM","startSec":47820,"heat":16,"lane":2},{"name":"OxFit Bad Moms","arena":"Backout Barbell Arena","eventNo":1,"time":"1:51 PM","startSec":49860,"heat":18,"lane":2},{"name":"OxFit Black","arena":"Mayhem Athlete Arena","eventNo":2,"time":"2:08 PM","startSec":50880,"heat":19,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"Mayhem Athlete Arena","eventNo":2,"time":"2:25 PM","startSec":51900,"heat":20,"lane":8},{"name":"Ox Mommies","arena":"LRX Beach Arena","eventNo":3,"time":"3:30 PM","startSec":55800,"heat":22,"lane":2},{"name":"OxFit Average Bros","arena":"PR Apparel Arena","eventNo":4,"time":"3:47 PM","startSec":56820,"heat":23,"lane":1},{"name":"OxFit Bad Moms","arena":"Mayhem Athlete Arena","eventNo":2,"time":"4:21 PM","startSec":58860,"heat":25,"lane":2},{"name":"OxFit Black","arena":"LRX Beach Arena","eventNo":3,"time":"4:38 PM","startSec":59880,"heat":26,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"LRX Beach Arena","eventNo":3,"time":"4:55 PM","startSec":60900,"heat":27,"lane":8}],"tbd":[],"heatCount":20}]}</script>
+<script id="workout-data" type="application/json">{"individual":{"1":{"day":"individual","eventNo":1,"arena":"Blackout Barbell Arena","format":"For Time","cap":"12:00","notes":[],"divisions":[{"name":"Elite","lines":["21 Calorie Ski","21 Front Squats (155/105)","21 Bar Muscle Ups","15 Calorie Ski","15 Front Squats (155/105)","15 Bar Muscle Ups","9 Calorie Ski","9 Front Squats (155/105)","9 Bar Muscle Ups"]},{"name":"RX","lines":["21 Calorie Ski","21 Front Squats (135/95)","21 Chest to Bar Pull Ups","15 Calorie Ski","15 Front Squats (135/95)","15 Chest to Bar Pull Ups","9 Calorie Ski","9 Front Squats (135/95)","9 Chest to Bar Pull Ups"]},{"name":"Intermediate/ Masters 40+","lines":["21 Calorie Ski","21 Front Squats (115/85)","21 Pull Ups","15 Calorie Ski","15 Front Squats (115/85)","15 Pull Ups","9 Calorie Ski","9 Front Squats (115/85)","9 Pull Ups"]},{"name":"Masters 50+","lines":["21 Calorie Ski","21 Front Squats (95/65)","21 Pulls Ups","15 Calorie Ski","15 Front Squats (95/65)","15 Pull Ups","9 Calorie Ski","9 Front Squats (95/65)","9 Pull Ups"]},{"name":"Scaled","lines":["21 Calorie Ski","21 Front Squats (95/65)","21 Ring Rows","15 Calorie Ski","15 Front Squats (95/65)","15 Ring Rows","9 Calorie Ski","9 Front Squats (95/65)","9 Ring Rows"]},{"name":"Teen (16-17)","lines":["21 Calorie Ski","21 Front Squats (95/65)","21 Pulls Ups","15 Calorie Ski","15 Front Squats (95/65)","15 Pull Ups","9 Calorie Ski","9 Front Squats (95/65)","9 Pull Ups"]},{"name":"Teen (14-15)","lines":["21 Calorie Ski","21 Front Squats (75/55)","21 Ring Rows","15 Calorie Ski","15 Front Squats (75/55)","15 Ring Rows","9 Calorie Ski","9 Front Squats (75/55)","9 Ring Rows"]}],"flow":["3, 2, 1, Go\u2026 Beginning under the rig, Athletes will advance to the ski erg on the opposite side of the floor and perform 21 calories on the ski erg.","After completing all calories on the ski erg, Athletes will then advance to their barbell and perform 21 front squats.","After completion of 21 front squats, Athletes will then move to the rig and complete the prescribed gymnastics movement.","After completion of the first round of gymnastics, athletes will move back to the ski erg to start the round of 15, followed by the round of 9.","The athletes\u2019 time will be recorded when they cross the finish line by located directly in front of the finish mat."],"url":"https://pensacolabeachbrawl.com/fall-2026-individual-event-1/"},"2":{"day":"individual","eventNo":2,"arena":"Mayhem Athlete Arena","format":"3 Rounds for time","cap":"12:00","notes":[],"divisions":[{"name":"Elite","lines":["100 Double Unders","25' Single Dumbbell Overhead Walking Lunge (70/50)","20 Dumbbell facing burpees","25' Single Dumbbell Overhead Walking Lunge (70/50)"]},{"name":"RX","lines":["80 Double Unders","25' Single Dumbbell Overhead Walking Lunge (50/35)","20 Dumbbell facing burpees","25' Single Dumbbell Overhead Walking Lunge (50/35)"]},{"name":"Intermediate/ Masters 40+/ Masters 50+","lines":["60 Double Unders","25' Single Dumbbell Overhead Walking Lunge (50/35)","20 Dumbbell facing burpees","25' Single Dumbbell Overhead Walking Lunge (50/35)"]},{"name":"Teen 16-17","lines":["60 Double Unders","25' Single Dumbbell Overhead Walking Lunge (50/35)","20 Dumbbell facing burpees","25' Single Dumbbell Overhead Walking Lunge (50/35)"]},{"name":"Scaled/ Teen 14-15","lines":["60 Single Unders","25' Single Dumbbell Overhead Walking Lunge (35/25)","20 Dumbbell facing burpees","25' Single Dumbbell Overhead Walking Lunge (35/25)"]}],"flow":["3, 2, 1, Go\u2026 Athlete will begin the prescribed number of double unders. Once complete, they will move to the dumbbell, and lunge 25\u2019 down the floor with the dumbbell in the overhead position.","Once the athlete has crossed the 25\u2019 mark, they will set the dumbbell down on the turf and begin 20 dumbbell facing burpees over the dumbbell. Once all 20 burpees are complete, the athlete will return the dumbbell to the overhead position and lunge another 25\u2019 towards the start mat.","They may then begin round 2. Three total rounds will be completed with time counted when the athlete crosses the finish line onto their start mat."],"url":"https://pensacolabeachbrawl.com/fall-2026-individual-event-2/"},"3":{"day":"individual","eventNo":3,"arena":"LRX Arena","format":"For Time","cap":"12:00","notes":[],"divisions":[{"name":"Elite","lines":["10 Sandbag to shoulder (150/100)","3 Shuttle runs (1 rep = 50 ft out/50 ft back)","8 Sandbag to shoulder (150/100)","3 Shuttle runs","6 Sandbag to shoulder (150/100)","3 Shuttle runs","4 Sandbag to shoulder (150/100)","3 Shuttle runs","2 Sandbag to shoulder (150/100)","3 Shuttle runs"]},{"name":"RX","lines":["10 Sandbag to shoulder (100/80)","3 Shuttle runs (1 rep = 50 ft out/50 ft back)","8 Sandbag to shoulder (100/80)","3 Shuttle runs","6 Sandbag to shoulder (100/80)","3 Shuttle runs","4 Sandbag to shoulder (100/80)","3 Shuttle runs","2 Sandbag to shoulder (100/80)","3 Shuttle runs"]},{"name":"Intermediate/ Masters 40+/ Masters 50+/ Teens/ Scaled","lines":["10 Sandbag to shoulder (80/50)","3 Shuttle runs (1 rep = 50 ft out/50 ft back)","8 Sandbag to shoulder (80/50)","3 Shuttle runs","6 Sandbag to shoulder (80/50)","3 Shuttle runs","4 Sandbag to shoulder (80/50)","3 Shuttle runs","2 Sandbag to shoulder (80/50)","3 Shuttle runs"]}],"flow":["3, 2, 1, Go\u2026 Athlete will move from behind the EVENT START/FINISH line to their sandbag and perform 10 sandbag to shoulder .","They will then perform three 50ft shuttle runs (300ft in total). A pylon will be placed 50ft from the SHUTTLE RUN START/FINISH LINE \u2013 athletes will run 50ft to the pylon, going around, and 50ft back to the SHUTTLE RUN START/FINISH LINE , which will be 1 repetition.","After completion of 3 shuttle runs, athletes will then perform 8 sandbag to shoulder, and another 3 shuttles.","This will continue in descending rep scheme \u2013 6, 4, 2 \u2013 with final time being recorded when athlete returns to the EVENT START/FINISH line after their final 3 shuttles runs."],"url":"https://pensacolabeachbrawl.com/2026-fall-individual-event-3/"},"4":{"day":"individual","eventNo":4,"arena":"PR Apparel Arena","format":"For max weight","cap":"12:00","notes":[],"divisions":[{"name":"All divisions","lines":["1 Rep Max Snatch","Athletes will have 12 minutes to establish a 1 rep max snatch. Any variation of snatch is allowed."]}],"flow":[],"url":"https://pensacolabeachbrawl.com/fall-2026-individual-event-4/"}},"team":{"1":{"day":"team","eventNo":1,"arena":"Blackout Barbell Arena","format":"For Time \u00b7 2 rounds (each partnership) for time:","cap":"14:00","notes":["Same sex Pairs for coed"],"divisions":[{"name":"RX","lines":["Partner 1 & 2","20 Power Cleans (185/125)","15 Burpee Box Jump Overs (24/20)","10 Bar Muscle Ups","20 Toes to Bar","Partner 3 & 4","20 Toes to Bar","10 Bar Muscle Ups","15 Burpee Box Jump Overs (24/20)","20 Power Cleans (185/125)"]},{"name":"Intermediate/ Masters 40+","lines":["Partner 1 & 2","20 Power Cleans (135/95)","15 Burpee Box Jump Overs (24/20)","15 Pull Ups","15 Toes to Bar","Partner 3 & 4","15 Toes to Bar","15 Pull Ups","15 Burpee Box Jump Overs (24/20)","20 Power Cleans (135/95)"]},{"name":"Scaled","lines":["Partner 1 & 2","20 Power Cleans (95/65)","15 Burpee Box Step Overs (20)","15 Ring Rows","20 Knee Raises","Partner 3 & 4","20 Knee Raises","15 Ring Rows","15 Burpee Box Step Overs (20)","20 Power Cleans (95/65)"]}],"flow":["3, 2, 1, Go\u2026 Athletes 1 & 2 will advance from the start mat to the barbell and complete 20 power cleans, split as desired.","After 20 power cleans, Athletes 1 & 2 will advance to the burpee box jump/step overs, completing 15 repetitions.","After 15 Burpee Box Jump/Step Overs, the Athletes 1 & 2 will advance to the rig and complete the Bar Muscle Ups/Pull Ups/Ring Rows, split as desired.","After the Bar Muscle Ups/Pull Ups/Ring Rows, the pair will complete 20 Toes to Bar/Knee Raises.","Upon completion of the Toes to Bar/Knee Raises, Athletes 1&2 will return to the start mat at the other end of the floor, signaling the release of Athletes 3 & 4.","Athletes 3 & 4 will advance from the start mat to the rig, completing the work in reverse order.","After completion of the 20 power cleans, athletes 3 & 4 will move onto the start mat, releasing athletes 1 & 2 for their second round.","Round 2 for both pairs will be completed in the same fashion.","Time is complete when athletes 3 & 4 cross the finish line onto their start mats for the second time.","*Coed teams will complete the work in same-sex pairs"],"url":"https://pensacolabeachbrawl.com/fall-2026-team-event-1/"},"2":{"day":"team","eventNo":2,"arena":"Mayhem Athlete Arena","format":"For Time \u00b7 Relay style","cap":"14:00","notes":[],"divisions":[{"name":"Rx","lines":["21/18 Calorie Ski","25ft Double Dumbbell Walking Lunge (50/35)","25 Double Dumbbell Thrusters (50/35)","25ft Double DB Walking Lunge (50/35)"]},{"name":"Intermediate/ Masters 40+","lines":["18/15 Calorie Ski","25ft Double Dumbbell Walking Lunge (50/35)","20 Double Dumbbell Thrusters (50/35)","25ft Double Dumbbell Walking Lunge (50/35)"]},{"name":"Scaled","lines":["18/15 Calorie Ski","25ft Double Dumbbell Walking Lunge (35/25)","20 Double Dumbbell Thrusters (35/25)","25ft Double Dumbbell Walking Lunge (35/25)"]}],"flow":["3,2,1 go\u2026 Athlete 1 will move from their start mat, across the floor to the ski erg and complete prescribed calories.","Once complete, they will move to the dumbbells where they will complete 25ft of double dumbbell walking lunges towards the start mat \u2013 any position is allowed for dumbbells.","Once they have completed 25ft of double dumbbell walking lunges, they will perform the prescribed number of double dumbbell thrusters, before lunging another 25ft towards the ski erg.","Once they have crossed the 25ft line, they will sprint back to the start mat, releasing athlete 2.","This will continue in the same flow for athletes 2, 3, and 4. Time will be counted when athlete 4 returns to the start mat.","*Coed team order will be Female, Female, Male, Male."],"url":"https://pensacolabeachbrawl.com/fall-2026-team-event-2/"},"3":{"day":"team","eventNo":3,"arena":"LRX Arena","format":"For Time","cap":"14:00","notes":["Same sex Pairs for coed"],"divisions":[{"name":"RX","lines":["Partner 1 & Partner 2","200ft Sandbag Carry (100/80) (50ft down, 50ft back)","20 Sandbag to shoulder (100/80)","Then Partner 3 & 4 do the same.","Partner 1 & Partner 2","200ft Sandbag Carry (100/80) (50ft down, 50ft back)","15 Sandbag to shoulder (100/80)","Then Partner 3 & 4 do the same.","Partner 1 & Partner 2","200ft Sandbag Carry (100/80) (50ft down, 50 ft back)","10 Sandbag to shoulder (100/80)","Then Partner 3 & 4 do the same."]},{"name":"Intermediate/ Masters 40+ / Scaled","lines":["Partner 1 & Partner 2","200ft Sandbag Carry (80/50) (50ft down, 50ft back)","20 Sandbag to shoulder (80/50)","Then Partner 3 & 4 do the same.","Partner 1 & Partner 2","200ft Sandbag Carry (80/50) (50ft down, 50ft back)","15 Sandbag to shoulder (80/50)","Then Partner 3 & 4 do the same.","Partner 1 & Partner 2","200ft Sandbag Carry (80/50) (50ft down, 50 ft back)","10 Sandbag to shoulder (80/50)","Then Partner 3 & 4 do the same."]}],"flow":["3,2,1 go\u2026 Athletes 1&2 will move from event start/finish line to begin the 200 ft Sandbag Carry. Athletes will move together, 50ft down their lane, around a pylon, and 50ft back until 200ft has been completed. The Sandbag Carry may be split as needed.","Then they will perform 20 Sandbag to shoulder. The Sandbag to Shoulder may be split as needed.","After completion of the Sandbag to shoulder, athletes 1 & 2 will advance the sandbag to the next repetition marker and return to the event start/finish line , releasing athletes 3 & 4 to begin their 200ft Sandbag Carry and 20 Sandbag to shoulder.","This flow will continue in the same fashion for the round of 200ft Sandbag Carry and 15 Sandbag to shoulder as well as the 200ft Sandbag Carry and 10 Sandbag to shoulder rounds.","Final time will be called when athletes 3 & 4 complete the 10 Sandbag to shoulder, and all 4 athletes cross the event start/finish line ."],"url":"https://pensacolabeachbrawl.com/2026-fall-team-event-3/"},"4":{"day":"team","eventNo":4,"arena":"PR Apparel Arena","format":"For max weight","cap":"13:00","notes":["Coed pairs will be same sex.","Each lane will have one men's bar and one women\u2019s bar.","Same sex pairs will share one barbell.","All 4 athletes can assist in loading/unloading the barbell."],"divisions":[{"name":"All divisions","lines":["0:00 to 6:00","Partner 1 & 2","1RM SNATCH","1:00 transition","7:00 to 13:00","Partner 3 & 4","1 SNATCH + 1 OVERHEAD SQUAT","The final score will be total weight. Partner 1 & 2 combined highest weight successfully lifted plus Partner 3 & 4 combined highest weight successfully lifted."]}],"flow":["3, 2, 1\u2026 GO, Athletes 1 & 2 will have 6 mins to establish a 1RM Snatch. They will work together, on the same barbell, working in lifts as needed.","There will be a 1-minute transition to Athletes 3 & 4.","Athletes 3 & 4 will then have 6 minutes to establish a complex of 1 snatch + 1 overhead squat. They will work together, on the same barbell, working in lifts as needed."],"url":"https://pensacolabeachbrawl.com/fall-2026-team-event-4/"}}}</script>
 <script>
 (function(){
   "use strict";
 
   var DATA = JSON.parse(document.getElementById('schedule-data').textContent);
+  var WODS = JSON.parse(document.getElementById('workout-data').textContent);
   var TZ = DATA.timeZone;
 
   /* ==================================================================
@@ -499,6 +607,72 @@
     var i = DATA.arenas.indexOf(a);
     return i < 0 ? '' : 'a' + i;
   }
+
+  /* ---- workouts -----------------------------------------------------
+     Attached by event number, never by arena name: the heat sheet says
+     "Backout Barbell"/"LRX Beach" where the organisers say "Blackout
+     Barbell"/"LRX". The build cross-checks that the two agree.        */
+  function wodFor(day, eventNo){
+    var set = WODS[day.wodKey];
+    return (set && set[String(eventNo)]) || null;
+  }
+  // Division names are written inconsistently across events — "Teen (16-17)"
+  // in one, "Teen 16-17" in another, and several rolled into a single
+  // "Intermediate/ Masters 40+/ Teens/ Scaled" block. Normalise to compare.
+  function normDiv(x){ return x.toLowerCase().replace(/[^a-z0-9+]/g, ''); }
+  function alphaDiv(x){ return x.toLowerCase().replace(/[^a-z]/g, ''); }
+  function divTokens(name){ return name.split('/').map(function(x){ return x.trim(); })
+    .filter(Boolean); }
+
+  // The event with the most blocks spells out the day's real division list;
+  // the others fold several divisions into one block.
+  function divisionChoices(day){
+    var best = [], set = WODS[day.wodKey] || {};
+    Object.keys(set).forEach(function(k){
+      var toks = [];
+      (set[k].divisions || []).forEach(function(d){
+        divTokens(d.name).forEach(function(t){ toks.push(t); });
+      });
+      if (toks.length > best.length) best = toks;
+    });
+    var seen = {}, out = [];
+    best.forEach(function(t){
+      if (/^all divisions$/i.test(t)) return;
+      var k = normDiv(t);
+      if (!seen[k]) { seen[k] = 1; out.push(t); }
+    });
+    return out;
+  }
+
+  // Exact token match first, then an alphabetic-prefix match so a choice of
+  // "Teen 16-17" still lands in a block labelled "... / Teens / Scaled".
+  function pickDivision(wod, choice){
+    var divs = wod.divisions || [];
+    if (!divs.length) return null;
+    if (!choice) return divs[0];
+    var want = normDiv(choice), wantA = alphaDiv(choice), i, j, toks;
+    for (i = 0; i < divs.length; i++) {
+      toks = divTokens(divs[i].name);
+      for (j = 0; j < toks.length; j++) if (normDiv(toks[j]) === want) return divs[i];
+    }
+    for (i = 0; i < divs.length; i++) {
+      toks = divTokens(divs[i].name);
+      for (j = 0; j < toks.length; j++) {
+        var a = alphaDiv(toks[j]);
+        if (a && wantA && (a.indexOf(wantA) === 0 || wantA.indexOf(a) === 0)) return divs[i];
+      }
+    }
+    return divs[0];
+  }
+
+  function wodTag(day, eventNo){
+    var w = wodFor(day, eventNo);
+    if (!w) return '';
+    var bits = [];
+    if (w.format) bits.push(w.format);
+    if (w.cap) bits.push(w.cap + ' cap');
+    return bits.join(' · ');
+  }
   function esc(s){
     return String(s).replace(/[&<>"]/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
@@ -527,9 +701,11 @@
   }
 
   var selected = null; // null = follow the calendar
-  // 'time' = chronological running order, 'arena' = grouped by event/arena.
-  // Assigned below, outside the pure block the tests extract.
+  // 'time' = chronological running order, 'arena' = grouped by event/arena,
+  // 'wods' = the workouts themselves. Both assigned below, outside the pure
+  // block the tests extract.
   var viewMode = 'time';
+  var division = null;
 
   function classify(day, t){
     var dur = day.heatMinutes * 60000;
@@ -598,6 +774,7 @@
   // grouping answers both "which event" and "which arena".
   function arenaSections(day, c){
     function key(e){ return e.name + '|' + e.eventNo; }
+    /* eslint-disable-next-line no-unused-vars */
     var status = {};
     c.done.forEach(function(r){ status[key(r.e)] = 'is-done'; });
     c.live.forEach(function(r){ status[key(r.e)] = 'is-live'; });
@@ -612,6 +789,8 @@
       return '<section class="sec ' + arenaCls(arena) + '">' +
         '<div class="arena-h"><i>Event ' + (i + 1) + '</i><b>' +
           esc(arena) + '</b></div>' +
+        (wodTag(day, i + 1)
+          ? '<div class="tagline">' + esc(wodTag(day, i + 1)) + '</div>' : '') +
         rows.map(function(e){
           var st = status[key(e)] || '';
           var tag = st === 'is-live' ? '<span class="tag">Now</span>'
@@ -650,6 +829,75 @@
     if (msg === lastSaid) return;
     lastSaid = msg;
     document.getElementById('srStatus').textContent = msg;
+  }
+
+  // Partner/segment headings inside a workout are labels, not reps.
+  function wodLineCls(line){
+    if (/^partner\b|^then partner|^\d+:\d{2}\s+to\s+\d+:\d{2}|^\d+:\d{2} transition/i.test(line))
+      return 'part';
+    if (line.length > 64) return 'prose';
+    return '';
+  }
+
+  function workoutSections(day, c, t){
+    var liveEvents = {};
+    c.live.forEach(function(r){ liveEvents[r.e.eventNo] = 1; });
+    var nextEvents = {};
+    c.next.forEach(function(r){ nextEvents[r.e.eventNo] = 1; });
+
+    return DATA.arenas.map(function(arena, i){
+      var no = i + 1, w = wodFor(day, no);
+      if (!w) return '';
+      var div = pickDivision(w, division);
+      var mine = day.entries.filter(function(e){ return e.eventNo === no; })
+        .sort(function(a, b){ return a.startSec - b.startSec; });
+      var when = mine.length
+        ? mine[0].time + (mine.length > 1 ? '–' + mine[mine.length - 1].time : '')
+        : '';
+      var state = liveEvents[no] ? ' is-live' : '';
+      var badge = liveEvents[no] ? '<span class="tag">Now</span>'
+                : nextEvents[no] ? '<span class="tag">Next</span>' : '';
+
+      return '<section class="wod ' + arenaCls(arena) + '">' +
+        '<div class="wod-h"><i>Event ' + no + '</i><b>' + esc(arena) + '</b>' +
+          badge + (when ? '<span class="when num">' + esc(when) + '</span>' : '') +
+        '</div>' +
+        '<div class="tagline">' + (w.format ? '<em>' + esc(w.format) + '</em>' : '') +
+          (w.cap ? (w.format ? ' · ' : '') + esc(w.cap) + ' cap' : '') + '</div>' +
+        '<div class="wod-body' + state + '">' +
+          (div ? '<div class="wod-div">' + esc(div.name) + '</div>' : '') +
+          (div ? div.lines.map(function(l){
+            return '<div class="wod-line ' + wodLineCls(l) + '">' + esc(l) + '</div>';
+          }).join('') : '') +
+          (w.notes || []).map(function(n){
+            return '<div class="wod-note">' + esc(n) + '</div>';
+          }).join('') +
+        '</div>' +
+        '<a class="wod-link" href="' + esc(w.url) + '" target="_blank" ' +
+          'rel="noopener">Flow &amp; movement standards &rarr;</a>' +
+      '</section>';
+    }).join('');
+  }
+
+  // The division list differs by day (individuals have Elite/Masters/Teen
+  // tiers that teams do not), so the picker is rebuilt when the day changes.
+  var pickerDay = null;
+  function syncPicker(day){
+    document.getElementById('picker').hidden = viewMode !== 'wods';
+    if (pickerDay === day.id) return;
+    pickerDay = day.id;
+    var sel = document.getElementById('division');
+    var choices = divisionChoices(day);
+    sel.innerHTML = choices.map(function(c){
+      return '<option>' + esc(c) + '</option>';
+    }).join('');
+    var keep = division && choices.filter(function(c){
+      return normDiv(c) === normDiv(division);
+    })[0];
+    division = keep ||
+      choices.filter(function(c){ return /^rx$/i.test(c); })[0] ||
+      choices[0] || null;
+    if (division) sel.value = division;
   }
 
   function render(){
@@ -736,6 +984,8 @@
               '<div class="now-name">' + esc(r.e.name) + '</div>' +
               '<div class="now-arena">' + esc(r.e.arena) +
                 '<em>Event ' + r.e.eventNo + '</em></div>' +
+              (wodTag(day, r.e.eventNo)
+                ? '<div class="now-wod">' + esc(wodTag(day, r.e.eventNo)) + '</div>' : '') +
               '<div class="slots">' +
                 '<div class="slot"><i>Heat</i><b class="num">' + r.e.heat + '</b></div>' +
                 '<div class="slot"><i>Lane</i><b class="num">' + r.e.lane + '</b></div>' +
@@ -772,14 +1022,17 @@
       }
     }
 
-    document.getElementById('mode-time')
-      .setAttribute('aria-pressed', String(viewMode === 'time'));
-    document.getElementById('mode-arena')
-      .setAttribute('aria-pressed', String(viewMode === 'arena'));
+    ['time','arena','wods'].forEach(function(m){
+      document.getElementById('mode-' + m)
+        .setAttribute('aria-pressed', String(viewMode === m));
+    });
+    syncPicker(day);
 
-    if (!chrono) {
+    if (viewMode === 'arena') {
       out.push(arenaSections(day, c));
       out.push(tbdHTML(day));
+    } else if (viewMode === 'wods') {
+      out.push(workoutSections(day, c, t));
     }
 
     paint(out.join(''));
@@ -797,9 +1050,17 @@
   // every access is guarded and the page renders fine without it.
   try {
     var saved = localStorage.getItem('bb26-view');
-    if (saved === 'arena' || saved === 'time') viewMode = saved;
+    if (saved === 'arena' || saved === 'time' || saved === 'wods') viewMode = saved;
+    var savedDiv = localStorage.getItem('bb26-division');
+    if (savedDiv) division = savedDiv;
   } catch (err) {}
-  [['mode-time','time'], ['mode-arena','arena']].forEach(function(pair){
+
+  document.getElementById('division').addEventListener('change', function(){
+    division = this.value;
+    try { localStorage.setItem('bb26-division', division); } catch (err) {}
+    render();
+  });
+  [['mode-time','time'], ['mode-arena','arena'], ['mode-wods','wods']].forEach(function(pair){
     document.getElementById(pair[0]).addEventListener('click', function(){
       viewMode = pair[1];
       try { localStorage.setItem('bb26-view', viewMode); } catch (err) {}
