@@ -344,7 +344,8 @@
       "tbd": [
         "Savannah Branch",
         "Whitney Dunn"
-      ]
+      ],
+      "heatCount": 20
     },
     {
       "id": "sunday",
@@ -534,7 +535,8 @@
           "lane": 8
         }
       ],
-      "tbd": []
+      "tbd": [],
+      "heatCount": 20
     }
   ]
 }

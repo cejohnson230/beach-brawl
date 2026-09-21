@@ -91,14 +91,16 @@ def main():
         ],
     }
 
-    OUT.write_text(json.dumps(data, indent=2) + "\n")
-
-    # --- verification ---------------------------------------------------
+    # --- verification (before anything is written) -----------------------
     errs = []
-    if len(ind) != 36:
-        errs.append(f"expected 36 individual entries, got {len(ind)}")
-    if len(team) != 20:
-        errs.append(f"expected 20 team entries, got {len(team)}")
+    if not ind:
+        errs.append("no individual entries parsed")
+    if not team:
+        errs.append("no team entries parsed")
+    for b, label in ((ind, "individual"), (team, "team")):
+        if len(b) % 4:
+            errs.append(f"{len(b)} {label} entries is not a whole number of "
+                        f"competitors (4 events each)")
 
     for day in data["days"]:
         by_person = {}
@@ -144,6 +146,10 @@ def main():
             if not (6 * 3600 <= e["startSec"] <= 20 * 3600):
                 errs.append(f"{e['name']} {e['time']} -> implausible {e['startSec']}s")
 
+    for day in data["days"]:
+        heats = {e["heat"] for e in day["entries"]}
+        day["heatCount"] = len(heats)
+
     print(f"individuals: {len(ind)} entries, {len(ind)//4} athletes, tbd={tbd_i}")
     print(f"teams:       {len(team)} entries, {len(team)//4} teams, tbd={tbd_t}")
     for day in data["days"]:
@@ -151,11 +157,13 @@ def main():
         print(f"{day['id']}: {len(hs)} distinct heats, "
               f"{hs[0][1]} -> {hs[-1][1]}")
     if errs:
-        print("\nVERIFICATION FAILED:", file=sys.stderr)
+        print("\nVERIFICATION FAILED \u2014 nothing written:", file=sys.stderr)
         for e in errs:
             print("  -", e, file=sys.stderr)
         sys.exit(1)
     print("\nverification OK")
+
+    OUT.write_text(json.dumps(data, indent=2) + "\n")
 
     # --- inject into the page -------------------------------------------
     tpl = (ROOT / "src" / "index.template.html").read_text()

@@ -13,21 +13,37 @@ const ROOT = path.join(__dirname, '..');
 const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/schedule.json'), 'utf8'));
 
-// --- extract the DOM-free portion of the engine --------------------------
-const START = 'var partsFmt = new Intl.DateTimeFormat';
-const END = '/* ==================================================================\n     Render';
-const a = page.indexOf(START);
-const b = page.indexOf(END);
-assert.ok(a > 0 && b > a, 'could not locate engine block in index.html');
-const src = page.slice(a, b);
+// --- extract the DOM-free portions of the engine -------------------------
+// Two windows: the time engine, and the arena-view builder (which needs only
+// DATA, esc and arenaCls from the first). Anything touching the DOM, the
+// clock interval or localStorage stays out of both.
+function slice(from, to, label) {
+  const a = page.indexOf(from);
+  const b = page.indexOf(to, a + 1);
+  assert.ok(a > 0 && b > a, `could not locate ${label} in index.html`);
+  return page.slice(a, b);
+}
+const src =
+  slice('var partsFmt = new Intl.DateTimeFormat',
+        '/* ==================================================================\n     Render',
+        'time engine') +
+  '\n' +
+  slice('function arenaSections(day, c){',
+        '  // #body is rebuilt from a string',
+        'arena view');
+
+assert.ok(!/localStorage/.test(src),
+  'extracted block must stay DOM-free: localStorage leaked back in');
+assert.ok(!/document\./.test(src),
+  'extracted block must stay DOM-free: document access leaked back in');
 
 const sandbox = { DATA: data, TZ: data.timeZone, location: { search: '' }, document: null };
 const engine = new Function(
   'DATA', 'TZ', 'location',
-  src + '\nreturn {wallToEpoch,venueParts,venueDateISO,venueOffset,classify,dayBounds,autoDay,fmtClock,fmtDur,fmtMins,DAYS};'
+  src + '\nreturn {wallToEpoch,venueParts,venueDateISO,venueOffset,classify,dayBounds,autoDay,fmtClock,fmtDur,fmtMins,DAYS,arenaSections,arenaCls};'
 )(sandbox.DATA, sandbox.TZ, sandbox.location);
 
-const { wallToEpoch, venueDateISO, venueOffset, classify, dayBounds, autoDay, fmtClock, fmtDur, DAYS } = engine;
+const { wallToEpoch, venueDateISO, venueOffset, classify, dayBounds, autoDay, fmtClock, fmtDur, DAYS, arenaSections, arenaCls } = engine;
 
 let pass = 0, fail = 0;
 function t(name, fn) {
@@ -190,6 +206,58 @@ t('every minute of both days', () => {
       }
     }
   }
+});
+
+console.log('\narena view');
+t('each arena maps to its own colour class, in sheet order', () => {
+  assert.deepStrictEqual(data.arenas.map(arenaCls), ['a0', 'a1', 'a2', 'a3']);
+  assert.strictEqual(arenaCls('Not An Arena'), '');
+});
+t('emits one section per arena, labelled with its event number', () => {
+  const html = arenaSections(SAT, classify(SAT, at(SAT, '14:31')));
+  data.arenas.forEach((arena, i) => {
+    assert.ok(html.includes('<i>Event ' + (i + 1) + '</i><b>' + arena + '</b>'),
+      'missing section for ' + arena);
+  });
+  assert.strictEqual((html.match(/<section class="sec /g) || []).length, 4);
+});
+t('a section lists only its own arena, in time order', () => {
+  const html = arenaSections(SAT, classify(SAT, at(SAT, '14:31')));
+  data.arenas.forEach((arena, i) => {
+    const body = html.split('<section class="sec ')[i + 1];
+    const expected = SAT.entries
+      .filter(e => e.arena === arena)
+      .sort((x, y) => x.startSec - y.startSec || x.name.localeCompare(y.name));
+    const got = [...body.matchAll(/<div class="who">([^<]+)<\/div>/g)].map(m => m[1]);
+    assert.deepStrictEqual(got, expected.map(e => e.name), arena);
+  });
+});
+t('live beats done and next when a row is tagged', () => {
+  const when = at(SAT, '14:31');
+  const html = arenaSections(SAT, classify(SAT, when));
+  // Heat 23 at 2:30 PM: Ant Oxley (LRX), Bailey Barnard + Keith Caldwell (Backout)
+  assert.strictEqual((html.match(/class="tag">Now</g) || []).length, 3);
+  // Adam Morgan at 2:45 PM is the only thing queued next.
+  assert.strictEqual((html.match(/class="tag">Next</g) || []).length, 1);
+  const adam = html.split('ADAM MORGAN').length > 1 || html.includes('Adam Morgan');
+  assert.ok(adam, 'Adam Morgan should appear');
+});
+t('completed rows are marked done, upcoming rows are unmarked', () => {
+  const html = arenaSections(SAT, classify(SAT, at(SAT, '14:31')));
+  const rows = [...html.matchAll(/<div class="arow ([^"]*)">\s*<b class="t num">([^<]+)<\/b><div class="who">([^<]+)</g)]
+    .map(m => ({ cls: m[1].trim(), time: m[2], name: m[3] }));
+  assert.strictEqual(rows.length, 36, 'every entry should render exactly once');
+  const antE1 = rows.find(r => r.name === 'Ant Oxley' && r.time === '9:30 AM');
+  assert.strictEqual(antE1.cls, 'is-done');
+  const antLive = rows.find(r => r.name === 'Ant Oxley' && r.time === '2:30 PM');
+  assert.strictEqual(antLive.cls, 'is-live');
+  const antLater = rows.find(r => r.name === 'Ant Oxley' && r.time === '5:00 PM');
+  assert.strictEqual(antLater.cls, '');
+});
+t('before the first heat nothing is marked done', () => {
+  const html = arenaSections(SAT, classify(SAT, at(SAT, '7:00')));
+  assert.ok(!html.includes('is-done'));
+  assert.strictEqual((html.match(/class="tag">Next</g) || []).length, 3);
 });
 
 console.log('\nduration formatting');

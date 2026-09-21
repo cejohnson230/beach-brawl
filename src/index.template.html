@@ -23,6 +23,11 @@
     --azure-deep:#1488D4;
     --sun:#FFC53D;
     --coral:#FF6B4A;
+    --sea:#00B894;
+    --azure-ink:#0B6FB0;
+    --coral-ink:#C43A1A;
+    --sea-ink:#00705A;
+    --sun-ink:#8A5A00;
     --display:'Oswald',Impact,sans-serif;
     --body:'Lato',system-ui,sans-serif;
     --bd:3px solid var(--ink);
@@ -52,10 +57,10 @@
      saturated block colour (bars, chips); --acd is the darkened variant used
      for text, which needs to stay readable on cream. Colour is always
      reinforcement — the arena is spelled out everywhere too. */
-  .a0{--ac:#25ABF3;--acd:#0B6FB0}   /* Event 1 · Backout Barbell */
-  .a1{--ac:#FF6B4A;--acd:#C43A1A}   /* Event 2 · Mayhem Athlete  */
-  .a2{--ac:#00B894;--acd:#00705A}   /* Event 3 · LRX Beach       */
-  .a3{--ac:#FFC53D;--acd:#8A5A00}   /* Event 4 · PR Apparel      */
+  .a0{--ac:var(--azure);--acd:var(--azure-ink)}  /* Event 1 · Backout Barbell */
+  .a1{--ac:var(--coral);--acd:var(--coral-ink)}  /* Event 2 · Mayhem Athlete  */
+  .a2{--ac:var(--sea);  --acd:var(--sea-ink)}    /* Event 3 · LRX Beach       */
+  .a3{--ac:var(--sun);  --acd:var(--sun-ink)}    /* Event 4 · PR Apparel      */
 
   /* ---------- header ---------- */
   header{
@@ -173,10 +178,22 @@
     letter-spacing:.04em;font-size:clamp(16px,4.6vw,19px);line-height:1.1;
     color:var(--acd,var(--ink))}
   .arow{
-    display:flex;align-items:center;gap:10px;
+    position:relative;display:flex;align-items:center;gap:10px;
     background:var(--surface);border:2px solid var(--ink);
-    border-left:9px solid var(--ac,var(--ink));
-    box-shadow:var(--pop-sm);padding:8px 11px;margin-bottom:7px;
+    box-shadow:var(--pop-sm);padding:8px 11px 8px 20px;margin-bottom:7px;
+  }
+  /* The arena bar is a pseudo-element rather than a border-left, because the
+     state rules below set border-width, which would silently collapse a
+     border-left and take the arena cue with it. */
+  .row::before,.arow::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:9px;
+    background:var(--ac,var(--ink));
+  }
+  /* On a highlighted row the bar would otherwise sit on its own hue — azure
+     on the azure "now" row, sun on the sun "next" row — so switch to the
+     darkened variant, which stays visible against both. */
+  .row.next::before,.arow.is-live::before,.arow.is-next::before{
+    background:var(--acd,var(--ink));
   }
   .arow .t{font-family:var(--display);font-weight:700;font-size:14px;
     flex:none;width:68px;letter-spacing:.02em}
@@ -192,7 +209,7 @@
     letter-spacing:.14em;text-transform:uppercase;background:var(--ink);color:#fff;
     padding:3px 6px 2px;
   }
-  .arow.is-done{opacity:.4;box-shadow:none;border-color:var(--ink-15)}
+  .arow.is-done{opacity:.62;box-shadow:none;border-color:var(--ink-15)}
   .arow.is-next{background:var(--sun);border-width:3px;box-shadow:var(--pop)}
   .arow.is-live{background:var(--azure);border-width:3px;box-shadow:var(--pop);color:#fff}
   .arow.is-live .hl small{color:rgba(255,255,255,.82)}
@@ -263,10 +280,9 @@
     color:var(--ink-45);
   }
   .row{
-    display:flex;align-items:center;gap:11px;
+    position:relative;display:flex;align-items:center;gap:11px;
     background:var(--surface);border:2px solid var(--ink);
-    border-left:9px solid var(--ac,var(--ink));
-    box-shadow:var(--pop-sm);padding:9px 11px;margin-bottom:7px;
+    box-shadow:var(--pop-sm);padding:9px 11px 9px 20px;margin-bottom:7px;
   }
   .row .who{flex:1;min-width:0}
   .row .who b{
@@ -370,7 +386,7 @@
 </header>
 
 <main id="panel" role="tabpanel">
-  <section class="hero" id="hero" aria-live="polite">
+  <section class="hero" id="hero">
     <div class="hero-k" id="heroK">Loading</div>
     <div class="hero-v num" id="heroV">—</div>
     <div class="hero-sub" id="heroSub"></div>
@@ -379,6 +395,7 @@
     <button class="mode" type="button" id="mode-time" aria-pressed="true">By time</button>
     <button class="mode" type="button" id="mode-arena" aria-pressed="false">By arena</button>
   </div>
+  <p class="sr" id="srStatus" role="status" aria-live="polite"></p>
   <div id="body"></div>
 </main>
 
@@ -510,15 +527,9 @@
   }
 
   var selected = null; // null = follow the calendar
-
   // 'time' = chronological running order, 'arena' = grouped by event/arena.
-  // Remembered per viewer; storage can throw in private mode, so it is
-  // always guarded and the page renders fine without it.
+  // Assigned below, outside the pure block the tests extract.
   var viewMode = 'time';
-  try {
-    var saved = localStorage.getItem('bb26-view');
-    if (saved === 'arena' || saved === 'time') viewMode = saved;
-  } catch (err) {}
 
   function classify(day, t){
     var dur = day.heatMinutes * 60000;
@@ -565,7 +576,7 @@
 
   function groupHTML(g, cls){
     return '<div class="grp"><div class="grp-t"><b class="num">' + fmtClock(g.start) +
-      '</b><span>' + g.rows.length + (g.rows.length === 1 ? ' up' : ' up') + '</span></div>' +
+      '</b><span>' + g.rows.length + ' up</span></div>' +
       g.rows.map(function(r){ return rowHTML(r, cls); }).join('') + '</div>';
   }
 
@@ -615,6 +626,32 @@
     }).join('');
   }
 
+  // #body is rebuilt from a string, so a naive write every tick would snap
+  // every <details> shut and destroy text selection. Skip writes that change
+  // nothing, and carry disclosure state across the writes that do happen.
+  var lastHTML = null, disclosure = {};
+  function paint(html){
+    if (html === lastHTML) return;
+    var body = document.getElementById('body');
+    Array.prototype.forEach.call(body.querySelectorAll('details[id]'), function(d){
+      disclosure[d.id] = d.open;
+    });
+    body.innerHTML = html;
+    lastHTML = html;
+    Array.prototype.forEach.call(body.querySelectorAll('details[id]'), function(d){
+      if (Object.prototype.hasOwnProperty.call(disclosure, d.id)) d.open = disclosure[d.id];
+    });
+  }
+
+  // Announce only when the substance changes; the hero itself must not be a
+  // live region or a screen reader would read the countdown once a second.
+  var lastSaid = null;
+  function announce(msg){
+    if (msg === lastSaid) return;
+    lastSaid = msg;
+    document.getElementById('srStatus').textContent = msg;
+  }
+
   function render(){
     var t = now();
     var dayId = selected || autoDay(t);
@@ -637,6 +674,7 @@
         out = [];
 
     hero.classList.remove('is-live');
+    var chrono = viewMode === 'time';
 
     if (t < b.first) {
       /* ---- before this day's first heat ---- */
@@ -647,25 +685,35 @@
       heroSub.textContent = fmtClock(b.first) + ' · ' + day.division + ' · ' +
         (day.entries.length / 4) + ' ' + (dayId === 'sunday' ? 'teams' : 'athletes');
 
-      out.push(secHTML(day.label + ' schedule', day.entries.length,
-        groupByStart(day.entries.map(function(e){
-          return { e:e, start: wallToEpoch(day.date, e.startSec) };
-        }).sort(function(a,x){ return a.start - x.start || a.e.name.localeCompare(x.e.name); }))
-        .map(function(g){ return groupHTML(g); }).join('')));
-      out.push(tbdHTML(day));
+      announce('First heat ' + day.label + ' at ' + fmtClock(b.first));
+
+      if (chrono) {
+        out.push(secHTML(day.label + ' schedule', day.entries.length,
+          groupByStart(day.entries.map(function(e){
+            return { e:e, start: wallToEpoch(day.date, e.startSec) };
+          }).sort(function(a,x){ return a.start - x.start || a.e.name.localeCompare(x.e.name); }))
+          .map(function(g){ return groupHTML(g); }).join('')));
+        out.push(tbdHTML(day));
+      }
 
     } else if (t >= b.last) {
       /* ---- day finished ---- */
       heroK.textContent = day.label + ' complete';
       heroV.className = 'hero-v words';
       heroV.textContent = 'That’s a wrap';
-      heroSub.textContent = day.entries.length + ' heats done · last at ' +
-        fmtClock(b.last - day.heatMinutes * 60000);
-      out.push(secHTML(day.label + ' results order', day.entries.length,
-        '<details class="done" open><summary>Full day</summary><div class="done-list">' +
-        groupByStart(c.done).map(function(g){ return groupHTML(g); }).join('') +
-        '</div></details>'));
-      out.push(tbdHTML(day));
+      heroSub.textContent = (day.heatCount || 0) + ' heats done · ' +
+        (day.entries.length / 4) + (dayId === 'sunday' ? ' teams' : ' athletes') +
+        ' · last at ' + fmtClock(b.last - day.heatMinutes * 60000);
+      announce(day.label + ' complete');
+
+      if (chrono) {
+        out.push(secHTML(day.label + ' running order', day.entries.length,
+          '<details class="done" id="d-full" open><summary>Full day</summary>' +
+          '<div class="done-list">' +
+          groupByStart(c.done).map(function(g){ return groupHTML(g); }).join('') +
+          '</div></details>'));
+        out.push(tbdHTML(day));
+      }
 
     } else {
       /* ---- day in progress ---- */
@@ -677,6 +725,11 @@
         heroV.innerHTML = durHTML((c.liveEnd - t) / 1000);
         heroSub.textContent = 'Ends ' + fmtClock(c.liveEnd) + ' · ' + c.live.length +
           (dayId === 'sunday' ? ' on the floor' : (c.live.length === 1 ? ' athlete up' : ' athletes up'));
+        announce('On now: ' + c.live.map(function(r){
+          return r.e.name + ', ' + r.e.arena + ', lane ' + r.e.lane;
+        }).join('. '));
+        // Deliberately outside the `chrono` guard: "who is on right now" is
+        // the page's whole job, so it stays put in the arena view too.
         out.push(secHTML('On the floor', c.live.length,
           c.live.map(function(r){
             return '<div class="now-card ' + arenaCls(r.e.arena) + '">' +
@@ -692,32 +745,30 @@
           }).join('')));
       } else {
         heroK.textContent = 'Nobody up right now';
-        heroV.innerHTML = c.nextStart ? durHTML((c.nextStart - t) / 1000) : '—';
-        heroSub.textContent = c.nextStart
-          ? 'Until ' + esc(c.next[0].e.name) + ' at ' + fmtClock(c.nextStart)
-          : 'No crew heats left today';
+        heroV.innerHTML = durHTML((c.nextStart - t) / 1000);
+        // textContent already treats its input as literal text; esc() here
+        // would double-encode a name containing & or <.
+        heroSub.textContent = 'Until ' + c.next[0].e.name + ' at ' + fmtClock(c.nextStart);
+        announce('Nobody up. Next: ' + c.next[0].e.name + ', ' +
+          c.next[0].e.arena + ', at ' + fmtClock(c.nextStart));
       }
 
-      if (c.next.length) {
-        out.push(secHTML('Up next · ' + fmtMins((c.nextStart - t) / 1000), c.next.length,
-          c.next.map(function(r){ return rowHTML(r, 'next'); }).join('')));
-      }
-
-      if (c.later.length) {
-        out.push(secHTML('Later today', c.later.length,
-          groupByStart(c.later).map(function(g){ return groupHTML(g); }).join('')));
-      } else if (!c.next.length) {
-        out.push('<div class="empty"><b>All done for today</b>' +
-          '<span>Every crew heat is complete.</span></div>');
-      }
-
-      out.push(tbdHTML(day));
-
-      if (c.done.length) {
-        out.push('<details class="done"><summary>Earlier today · ' + c.done.length +
-          ' done</summary><div class="done-list">' +
-          groupByStart(c.done).map(function(g){ return groupHTML(g); }).join('') +
-          '</div></details>');
+      if (chrono) {
+        if (c.next.length) {
+          out.push(secHTML('Up next · ' + fmtMins((c.nextStart - t) / 1000), c.next.length,
+            c.next.map(function(r){ return rowHTML(r, 'next'); }).join('')));
+        }
+        if (c.later.length) {
+          out.push(secHTML('Later today', c.later.length,
+            groupByStart(c.later).map(function(g){ return groupHTML(g); }).join('')));
+        }
+        out.push(tbdHTML(day));
+        if (c.done.length) {
+          out.push('<details class="done" id="d-earlier"><summary>Earlier today · ' +
+            c.done.length + ' done</summary><div class="done-list">' +
+            groupByStart(c.done).map(function(g){ return groupHTML(g); }).join('') +
+            '</div></details>');
+        }
       }
     }
 
@@ -726,10 +777,12 @@
     document.getElementById('mode-arena')
       .setAttribute('aria-pressed', String(viewMode === 'arena'));
 
-    // The hero always reflects live status; only the listing below it swaps.
-    if (viewMode === 'arena') out = [arenaSections(day, c), tbdHTML(day)];
+    if (!chrono) {
+      out.push(arenaSections(day, c));
+      out.push(tbdHTML(day));
+    }
 
-    document.getElementById('body').innerHTML = out.join('');
+    paint(out.join(''));
   }
 
   /* ---- tabs ---- */
@@ -740,6 +793,12 @@
   });
 
   /* ---- view mode ---- */
+  // Remembered per viewer. Storage throws in some private-browsing modes, so
+  // every access is guarded and the page renders fine without it.
+  try {
+    var saved = localStorage.getItem('bb26-view');
+    if (saved === 'arena' || saved === 'time') viewMode = saved;
+  } catch (err) {}
   [['mode-time','time'], ['mode-arena','arena']].forEach(function(pair){
     document.getElementById(pair[0]).addEventListener('click', function(){
       viewMode = pair[1];
