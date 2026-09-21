@@ -48,6 +48,15 @@
   }
   .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 
+  /* One colour per arena, fixed to the event order in the sheet. --ac is the
+     saturated block colour (bars, chips); --acd is the darkened variant used
+     for text, which needs to stay readable on cream. Colour is always
+     reinforcement — the arena is spelled out everywhere too. */
+  .a0{--ac:#25ABF3;--acd:#0B6FB0}   /* Event 1 · Backout Barbell */
+  .a1{--ac:#FF6B4A;--acd:#C43A1A}   /* Event 2 · Mayhem Athlete  */
+  .a2{--ac:#00B894;--acd:#00705A}   /* Event 3 · LRX Beach       */
+  .a3{--ac:#FFC53D;--acd:#8A5A00}   /* Event 4 · PR Apparel      */
+
   /* ---------- header ---------- */
   header{
     position:sticky;top:0;z-index:20;
@@ -154,16 +163,19 @@
     display:flex;align-items:center;gap:9px;margin:0 0 10px;
     border-bottom:3px solid var(--ink);padding-bottom:7px;
   }
+  .arena-h{border-bottom-color:var(--ac,var(--ink))}
   .arena-h i{
     font-style:normal;flex:none;font-family:var(--display);font-weight:700;
     font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#fff;
-    background:var(--ink);padding:4px 7px 3px;
+    background:var(--acd,var(--ink));padding:4px 7px 3px;
   }
   .arena-h b{font-family:var(--display);font-weight:700;text-transform:uppercase;
-    letter-spacing:.04em;font-size:16px;line-height:1.1}
+    letter-spacing:.04em;font-size:clamp(16px,4.6vw,19px);line-height:1.1;
+    color:var(--acd,var(--ink))}
   .arow{
     display:flex;align-items:center;gap:10px;
     background:var(--surface);border:2px solid var(--ink);
+    border-left:9px solid var(--ac,var(--ink));
     box-shadow:var(--pop-sm);padding:8px 11px;margin-bottom:7px;
   }
   .arow .t{font-family:var(--display);font-weight:700;font-size:14px;
@@ -207,8 +219,8 @@
     padding:15px 15px 14px 18px;margin-bottom:13px;position:relative;
   }
   .now-card::before{
-    content:"";position:absolute;left:0;top:0;bottom:0;width:7px;
-    background:var(--azure);
+    content:"";position:absolute;left:0;top:0;bottom:0;width:9px;
+    background:var(--ac,var(--azure));
   }
   .now-name{
     font-family:var(--display);font-weight:700;text-transform:uppercase;
@@ -216,9 +228,12 @@
     word-break:break-word;
   }
   .now-arena{
-    font-family:var(--display);font-weight:600;text-transform:uppercase;
-    letter-spacing:.1em;font-size:12px;color:var(--azure-deep);margin-top:5px;
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.07em;font-size:clamp(14px,4vw,17px);
+    color:var(--acd,var(--azure-deep));margin-top:6px;
   }
+  .now-arena em{font-style:normal;font-weight:500;font-size:.72em;
+    letter-spacing:.11em;color:var(--ink-45);margin-left:.45em}
   .slots{display:flex;gap:9px;margin-top:13px}
   .slot{
     flex:1;border:2px solid var(--ink);background:var(--sand);
@@ -250,6 +265,7 @@
   .row{
     display:flex;align-items:center;gap:11px;
     background:var(--surface);border:2px solid var(--ink);
+    border-left:9px solid var(--ac,var(--ink));
     box-shadow:var(--pop-sm);padding:9px 11px;margin-bottom:7px;
   }
   .row .who{flex:1;min-width:0}
@@ -259,9 +275,16 @@
     overflow-wrap:break-word;
   }
   .row .who span{
-    display:block;font-size:11px;color:var(--ink-70);margin-top:2px;
-    letter-spacing:.02em;
+    display:block;margin-top:3px;
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    font-size:13px;letter-spacing:.075em;color:var(--acd,var(--ink-70));
   }
+  .row .who span em{font-style:normal;font-weight:500;font-size:.82em;
+    letter-spacing:.1em;color:var(--ink-45);margin-left:.4em}
+  /* On the yellow "next" row the darkened arena colour loses contrast,
+     so fall back to ink there; the left bar still carries the colour. */
+  .row.next .who span{color:var(--ink)}
+  .row.next .who span em{color:rgba(8,19,89,.6)}
   .row .hl{
     flex:none;text-align:right;font-family:var(--display);font-weight:700;
     font-size:15px;letter-spacing:.04em;line-height:1.15;
@@ -454,6 +477,11 @@
     return h + 'h ' + String(m%60).padStart(2,'0') + 'm';
   }
   function shortArena(a){ return a.replace(/\s+Arena$/i,''); }
+  // Arena colour is keyed off its position in the sheet's event order.
+  function arenaCls(a){
+    var i = DATA.arenas.indexOf(a);
+    return i < 0 ? '' : 'a' + i;
+  }
   function esc(s){
     return String(s).replace(/[&<>"]/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
@@ -527,9 +555,10 @@
   }
 
   function rowHTML(r, cls){
-    return '<div class="row ' + (cls||'') + '">' +
+    return '<div class="row ' + arenaCls(r.e.arena) + ' ' + (cls||'') + '">' +
       '<div class="who"><b>' + esc(r.e.name) + '</b>' +
-      '<span>' + esc(shortArena(r.e.arena)) + ' · Event ' + r.e.eventNo + '</span></div>' +
+      '<span>' + esc(shortArena(r.e.arena)) +
+        '<em>Event ' + r.e.eventNo + '</em></span></div>' +
       '<div class="hl num">' + r.e.heat + ' / ' + r.e.lane +
       '<small>Heat / Lane</small></div></div>';
   }
@@ -569,7 +598,7 @@
           return a.startSec - b.startSec || a.name.localeCompare(b.name);
         });
       if (!rows.length) return '';
-      return '<section class="sec">' +
+      return '<section class="sec ' + arenaCls(arena) + '">' +
         '<div class="arena-h"><i>Event ' + (i + 1) + '</i><b>' +
           esc(arena) + '</b></div>' +
         rows.map(function(e){
@@ -650,9 +679,10 @@
           (dayId === 'sunday' ? ' on the floor' : (c.live.length === 1 ? ' athlete up' : ' athletes up'));
         out.push(secHTML('On the floor', c.live.length,
           c.live.map(function(r){
-            return '<div class="now-card">' +
+            return '<div class="now-card ' + arenaCls(r.e.arena) + '">' +
               '<div class="now-name">' + esc(r.e.name) + '</div>' +
-              '<div class="now-arena">' + esc(r.e.arena) + '</div>' +
+              '<div class="now-arena">' + esc(r.e.arena) +
+                '<em>Event ' + r.e.eventNo + '</em></div>' +
               '<div class="slots">' +
                 '<div class="slot"><i>Heat</i><b class="num">' + r.e.heat + '</b></div>' +
                 '<div class="slot"><i>Lane</i><b class="num">' + r.e.lane + '</b></div>' +
