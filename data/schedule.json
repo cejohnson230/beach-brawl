@@ -1,0 +1,540 @@
+{
+  "event": "Beach Brawl '26",
+  "venue": "Pensacola Beach, FL",
+  "timeZone": "America/Chicago",
+  "arenas": [
+    "Backout Barbell Arena",
+    "Mayhem Athlete Arena",
+    "LRX Beach Arena",
+    "PR Apparel Arena"
+  ],
+  "days": [
+    {
+      "id": "saturday",
+      "label": "Saturday",
+      "date": "2026-09-26",
+      "division": "Individuals",
+      "heatMinutes": 15,
+      "entries": [
+        {
+          "name": "Caitlyn Livingston",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "8:15 AM",
+          "startSec": 29700,
+          "heat": 2,
+          "lane": 7
+        },
+        {
+          "name": "Debbie Allen",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "8:15 AM",
+          "startSec": 29700,
+          "heat": 2,
+          "lane": 5
+        },
+        {
+          "name": "Kelsey Graham",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "8:15 AM",
+          "startSec": 29700,
+          "heat": 2,
+          "lane": 6
+        },
+        {
+          "name": "Caryn Ligon",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "8:30 AM",
+          "startSec": 30600,
+          "heat": 3,
+          "lane": 8
+        },
+        {
+          "name": "Nick Stanley",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "9:15 AM",
+          "startSec": 33300,
+          "heat": 6,
+          "lane": 3
+        },
+        {
+          "name": "Ant Oxley",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "9:30 AM",
+          "startSec": 34200,
+          "heat": 7,
+          "lane": 5
+        },
+        {
+          "name": "Bailey Barnard",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "9:30 AM",
+          "startSec": 34200,
+          "heat": 7,
+          "lane": 5
+        },
+        {
+          "name": "Keith Caldwell",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "9:30 AM",
+          "startSec": 34200,
+          "heat": 7,
+          "lane": 6
+        },
+        {
+          "name": "Adam Morgan",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "9:45 AM",
+          "startSec": 35100,
+          "heat": 8,
+          "lane": 4
+        },
+        {
+          "name": "Caitlyn Livingston",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "10:35 AM",
+          "startSec": 38100,
+          "heat": 10,
+          "lane": 7
+        },
+        {
+          "name": "Debbie Allen",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "10:35 AM",
+          "startSec": 38100,
+          "heat": 10,
+          "lane": 5
+        },
+        {
+          "name": "Kelsey Graham",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "10:35 AM",
+          "startSec": 38100,
+          "heat": 10,
+          "lane": 6
+        },
+        {
+          "name": "Caryn Ligon",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "10:50 AM",
+          "startSec": 39000,
+          "heat": 11,
+          "lane": 8
+        },
+        {
+          "name": "Nick Stanley",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "11:35 AM",
+          "startSec": 41700,
+          "heat": 14,
+          "lane": 3
+        },
+        {
+          "name": "Ant Oxley",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "11:50 AM",
+          "startSec": 42600,
+          "heat": 15,
+          "lane": 5
+        },
+        {
+          "name": "Bailey Barnard",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "11:50 AM",
+          "startSec": 42600,
+          "heat": 15,
+          "lane": 5
+        },
+        {
+          "name": "Keith Caldwell",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "11:50 AM",
+          "startSec": 42600,
+          "heat": 15,
+          "lane": 6
+        },
+        {
+          "name": "Adam Morgan",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "12:05 PM",
+          "startSec": 43500,
+          "heat": 16,
+          "lane": 4
+        },
+        {
+          "name": "Caitlyn Livingston",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "1:15 PM",
+          "startSec": 47700,
+          "heat": 18,
+          "lane": 7
+        },
+        {
+          "name": "Debbie Allen",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "1:15 PM",
+          "startSec": 47700,
+          "heat": 18,
+          "lane": 5
+        },
+        {
+          "name": "Kelsey Graham",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "1:15 PM",
+          "startSec": 47700,
+          "heat": 18,
+          "lane": 6
+        },
+        {
+          "name": "Caryn Ligon",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "1:30 PM",
+          "startSec": 48600,
+          "heat": 19,
+          "lane": 8
+        },
+        {
+          "name": "Nick Stanley",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "2:15 PM",
+          "startSec": 51300,
+          "heat": 22,
+          "lane": 3
+        },
+        {
+          "name": "Ant Oxley",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "2:30 PM",
+          "startSec": 52200,
+          "heat": 23,
+          "lane": 5
+        },
+        {
+          "name": "Bailey Barnard",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "2:30 PM",
+          "startSec": 52200,
+          "heat": 23,
+          "lane": 5
+        },
+        {
+          "name": "Keith Caldwell",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "2:30 PM",
+          "startSec": 52200,
+          "heat": 23,
+          "lane": 6
+        },
+        {
+          "name": "Adam Morgan",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "2:45 PM",
+          "startSec": 53100,
+          "heat": 24,
+          "lane": 4
+        },
+        {
+          "name": "Caitlyn Livingston",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "3:45 PM",
+          "startSec": 56700,
+          "heat": 26,
+          "lane": 7
+        },
+        {
+          "name": "Debbie Allen",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "3:45 PM",
+          "startSec": 56700,
+          "heat": 26,
+          "lane": 5
+        },
+        {
+          "name": "Kelsey Graham",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "3:45 PM",
+          "startSec": 56700,
+          "heat": 26,
+          "lane": 6
+        },
+        {
+          "name": "Caryn Ligon",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "4:00 PM",
+          "startSec": 57600,
+          "heat": 27,
+          "lane": 8
+        },
+        {
+          "name": "Nick Stanley",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "4:45 PM",
+          "startSec": 60300,
+          "heat": 30,
+          "lane": 3
+        },
+        {
+          "name": "Ant Oxley",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "5:00 PM",
+          "startSec": 61200,
+          "heat": 31,
+          "lane": 5
+        },
+        {
+          "name": "Bailey Barnard",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "5:00 PM",
+          "startSec": 61200,
+          "heat": 31,
+          "lane": 5
+        },
+        {
+          "name": "Keith Caldwell",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "5:00 PM",
+          "startSec": 61200,
+          "heat": 31,
+          "lane": 6
+        },
+        {
+          "name": "Adam Morgan",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "5:15 PM",
+          "startSec": 62100,
+          "heat": 32,
+          "lane": 4
+        }
+      ],
+      "tbd": [
+        "Savannah Branch",
+        "Whitney Dunn"
+      ]
+    },
+    {
+      "id": "sunday",
+      "label": "Sunday",
+      "date": "2026-09-27",
+      "division": "Teams",
+      "heatMinutes": 17,
+      "entries": [
+        {
+          "name": "Ox Mommies",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "8:00 AM",
+          "startSec": 28800,
+          "heat": 1,
+          "lane": 2
+        },
+        {
+          "name": "OxFit Average Bros",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "8:17 AM",
+          "startSec": 29820,
+          "heat": 2,
+          "lane": 1
+        },
+        {
+          "name": "OxFit Bad Moms",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "8:51 AM",
+          "startSec": 31860,
+          "heat": 4,
+          "lane": 2
+        },
+        {
+          "name": "OxFit Black",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "9:08 AM",
+          "startSec": 32880,
+          "heat": 5,
+          "lane": 4
+        },
+        {
+          "name": "OxFit 2Legit 2Quit",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "9:25 AM",
+          "startSec": 33900,
+          "heat": 6,
+          "lane": 8
+        },
+        {
+          "name": "Ox Mommies",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "10:20 AM",
+          "startSec": 37200,
+          "heat": 8,
+          "lane": 2
+        },
+        {
+          "name": "OxFit Average Bros",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "10:37 AM",
+          "startSec": 38220,
+          "heat": 9,
+          "lane": 1
+        },
+        {
+          "name": "OxFit Bad Moms",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "11:11 AM",
+          "startSec": 40260,
+          "heat": 11,
+          "lane": 2
+        },
+        {
+          "name": "OxFit Black",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "11:28 AM",
+          "startSec": 41280,
+          "heat": 12,
+          "lane": 4
+        },
+        {
+          "name": "OxFit 2Legit 2Quit",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "11:45 AM",
+          "startSec": 42300,
+          "heat": 13,
+          "lane": 8
+        },
+        {
+          "name": "Ox Mommies",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "1:00 PM",
+          "startSec": 46800,
+          "heat": 15,
+          "lane": 2
+        },
+        {
+          "name": "OxFit Average Bros",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "1:17 PM",
+          "startSec": 47820,
+          "heat": 16,
+          "lane": 2
+        },
+        {
+          "name": "OxFit Bad Moms",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "1:51 PM",
+          "startSec": 49860,
+          "heat": 18,
+          "lane": 2
+        },
+        {
+          "name": "OxFit Black",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "2:08 PM",
+          "startSec": 50880,
+          "heat": 19,
+          "lane": 4
+        },
+        {
+          "name": "OxFit 2Legit 2Quit",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "2:25 PM",
+          "startSec": 51900,
+          "heat": 20,
+          "lane": 8
+        },
+        {
+          "name": "Ox Mommies",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "3:30 PM",
+          "startSec": 55800,
+          "heat": 22,
+          "lane": 2
+        },
+        {
+          "name": "OxFit Average Bros",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "3:47 PM",
+          "startSec": 56820,
+          "heat": 23,
+          "lane": 1
+        },
+        {
+          "name": "OxFit Bad Moms",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "4:21 PM",
+          "startSec": 58860,
+          "heat": 25,
+          "lane": 2
+        },
+        {
+          "name": "OxFit Black",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "4:38 PM",
+          "startSec": 59880,
+          "heat": 26,
+          "lane": 4
+        },
+        {
+          "name": "OxFit 2Legit 2Quit",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "4:55 PM",
+          "startSec": 60900,
+          "heat": 27,
+          "lane": 8
+        }
+      ],
+      "tbd": []
+    }
+  ]
+}

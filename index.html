@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Beach Brawl '26 — OxFit Heat Board</title>
+<meta name="description" content="Live heat and lane board for the OxFit crew at Beach Brawl '26, Pensacola Beach FL.">
+<meta name="theme-color" content="#25ABF3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23081359'/%3E%3Ccircle cx='50' cy='38' r='19' fill='%23FFC53D'/%3E%3Cpath d='M0 62q25-12 50 0t50 0v38H0z' fill='%2325ABF3'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --sand:#FBF4E6;
+    --surface:#FFFDF7;
+    --ink:#081359;
+    --ink-70:rgba(8,19,89,.70);
+    --ink-45:rgba(8,19,89,.45);
+    --ink-15:rgba(8,19,89,.15);
+    --azure:#25ABF3;
+    --azure-bright:#33A7FF;
+    --azure-deep:#1488D4;
+    --sun:#FFC53D;
+    --coral:#FF6B4A;
+    --display:'Oswald',Impact,sans-serif;
+    --body:'Lato',system-ui,sans-serif;
+    --bd:3px solid var(--ink);
+    --pop:5px 5px 0 var(--ink);
+    --pop-sm:3px 3px 0 var(--ink);
+    --gut:16px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--sand);
+    color:var(--ink);
+    font-family:var(--body);
+    font-weight:400;
+    line-height:1.45;
+    min-height:100dvh;
+    overflow-x:hidden;
+    /* faint sun-bleached horizon */
+    background-image:
+      radial-gradient(120% 55% at 50% -10%, rgba(37,171,243,.16) 0%, transparent 62%);
+    background-repeat:no-repeat;
+  }
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky;top:0;z-index:20;
+    background:var(--ink);
+    border-bottom:var(--bd);
+    padding-top:env(safe-area-inset-top);
+  }
+  .hwrap{max-width:560px;margin:0 auto}
+  .stripes{
+    height:10px;
+    background:repeating-linear-gradient(115deg,
+      var(--azure) 0 14px, var(--azure-deep) 14px 28px,
+      var(--sun) 28px 42px, var(--ink) 42px 56px);
+  }
+  .bar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:11px var(--gut) 9px;
+  }
+  .brand{font-family:var(--display);font-weight:700;letter-spacing:.055em;
+    font-size:clamp(19px,5.4vw,26px);line-height:1;color:var(--sand);
+    text-transform:uppercase}
+  .brand em{font-style:normal;color:var(--azure-bright)}
+  .venue{font-size:10px;letter-spacing:.17em;text-transform:uppercase;
+    color:rgba(251,244,230,.62);font-weight:700;margin-top:4px}
+  .clock{text-align:right;flex:none}
+  .clock b{display:block;font-family:var(--display);font-weight:600;
+    font-size:clamp(21px,5.6vw,27px);line-height:1;color:var(--sand)}
+  .clock span{display:block;font-size:9.5px;letter-spacing:.17em;font-weight:700;
+    color:var(--azure-bright);text-transform:uppercase;margin-top:4px}
+
+  /* ---------- day tabs ---------- */
+  .tabs{display:flex;background:var(--ink);gap:0;
+    padding:0 var(--gut) 12px}
+  .tab{
+    flex:1;appearance:none;cursor:pointer;
+    background:transparent;color:rgba(251,244,230,.6);
+    border:2px solid rgba(251,244,230,.28);
+    font-family:var(--display);font-weight:600;text-transform:uppercase;
+    letter-spacing:.07em;font-size:12.5px;padding:9px 4px 8px;line-height:1.2;
+    transition:background .14s,color .14s,border-color .14s;
+  }
+  .tab:first-child{border-right-width:1px}
+  .tab:last-child{border-left-width:1px}
+  .tab small{display:block;font-size:9px;letter-spacing:.13em;opacity:.8;
+    font-weight:500;margin-top:2px}
+  .tab[aria-selected="true"]{
+    background:var(--azure);color:#fff;border-color:var(--azure);
+  }
+  .tab:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+
+  /* ---------- layout ---------- */
+  main{max-width:560px;margin:0 auto;padding:0 var(--gut) 56px}
+
+  /* ---------- hero status ---------- */
+  .hero{
+    background:var(--surface);border:var(--bd);box-shadow:var(--pop);
+    margin:18px 0 26px;padding:17px 16px 16px;position:relative;overflow:hidden;
+  }
+  .hero.is-live{background:var(--azure);color:#fff;border-color:var(--ink)}
+  .hero.is-live .hero-k{color:rgba(255,255,255,.92)}
+  .hero.is-live .hero-sub{color:rgba(255,255,255,.88)}
+  .hero-k{
+    font-family:var(--display);font-weight:600;text-transform:uppercase;
+    letter-spacing:.16em;font-size:11.5px;color:var(--ink-70);
+    display:flex;align-items:center;gap:7px;
+  }
+  .hero-v{
+    font-family:var(--display);font-weight:700;line-height:.95;
+    font-size:clamp(40px,13.5vw,62px);letter-spacing:.005em;margin-top:8px;
+  }
+  .hero-v small{
+    font-size:.25em;letter-spacing:.08em;margin-left:.32em;opacity:.68;
+    font-weight:600;text-transform:uppercase;
+  }
+  .hero-v.words{font-size:clamp(30px,9vw,46px)}
+  .hero-sub{font-size:13px;color:var(--ink-70);margin-top:9px;font-weight:700;
+    letter-spacing:.02em}
+  .dot{
+    width:11px;height:11px;border-radius:50%;background:var(--coral);
+    box-shadow:0 0 0 0 rgba(255,107,74,.8);animation:ping 1.9s infinite;flex:none;
+  }
+  .hero.is-live .dot{background:#fff;box-shadow:0 0 0 0 rgba(255,255,255,.85)}
+  @keyframes ping{
+    70%{box-shadow:0 0 0 11px rgba(255,107,74,0)}
+    100%{box-shadow:0 0 0 0 rgba(255,107,74,0)}
+  }
+
+  /* ---------- section headings ---------- */
+  .sec{margin:0 0 26px}
+  .sec-h{
+    display:flex;align-items:center;gap:10px;margin-bottom:12px;
+  }
+  .sec-h h2{
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.13em;font-size:13px;white-space:nowrap;
+  }
+  .sec-h .rule{flex:1;height:3px;background:var(--ink);opacity:.16}
+  .sec-h .cnt{
+    font-family:var(--display);font-size:11px;font-weight:600;
+    letter-spacing:.09em;color:var(--ink-45);
+  }
+
+  /* ---------- now cards ---------- */
+  .now-card{
+    background:var(--surface);border:var(--bd);box-shadow:var(--pop);
+    padding:15px 15px 14px 18px;margin-bottom:13px;position:relative;
+  }
+  .now-card::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:7px;
+    background:var(--azure);
+  }
+  .now-name{
+    font-family:var(--display);font-weight:700;text-transform:uppercase;
+    font-size:clamp(25px,7.2vw,35px);line-height:1.02;letter-spacing:.012em;
+    word-break:break-word;
+  }
+  .now-arena{
+    font-family:var(--display);font-weight:600;text-transform:uppercase;
+    letter-spacing:.1em;font-size:12px;color:var(--azure-deep);margin-top:5px;
+  }
+  .slots{display:flex;gap:9px;margin-top:13px}
+  .slot{
+    flex:1;border:2px solid var(--ink);background:var(--sand);
+    padding:6px 9px 7px;
+  }
+  .slot i{
+    display:block;font-style:normal;font-family:var(--display);font-weight:600;
+    font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;
+    color:var(--ink-45);
+  }
+  .slot b{
+    display:block;font-family:var(--display);font-weight:700;
+    font-size:clamp(24px,6.6vw,30px);line-height:1.05;margin-top:1px;
+  }
+  .slot.time b{font-size:clamp(17px,4.6vw,21px);padding-top:4px}
+
+  /* ---------- schedule rows ---------- */
+  .grp{margin-bottom:13px}
+  .grp-t{
+    display:flex;align-items:baseline;gap:9px;margin-bottom:5px;
+  }
+  .grp-t b{
+    font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.03em;
+  }
+  .grp-t span{
+    font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--ink-45);
+  }
+  .row{
+    display:flex;align-items:center;gap:11px;
+    background:var(--surface);border:2px solid var(--ink);
+    box-shadow:var(--pop-sm);padding:9px 11px;margin-bottom:7px;
+  }
+  .row .who{flex:1;min-width:0}
+  .row .who b{
+    display:block;font-family:var(--display);font-weight:600;
+    text-transform:uppercase;font-size:16px;letter-spacing:.025em;line-height:1.15;
+    overflow-wrap:break-word;
+  }
+  .row .who span{
+    display:block;font-size:11px;color:var(--ink-70);margin-top:2px;
+    letter-spacing:.02em;
+  }
+  .row .hl{
+    flex:none;text-align:right;font-family:var(--display);font-weight:700;
+    font-size:15px;letter-spacing:.04em;line-height:1.15;
+  }
+  .row .hl small{
+    display:block;font-size:9.5px;font-weight:500;letter-spacing:.13em;
+    color:var(--ink-45);text-transform:uppercase;
+  }
+  .row.next{border-width:3px;box-shadow:var(--pop);background:var(--sun)}
+
+  /* ---------- done / disclosure ---------- */
+  details.done{border-top:3px solid var(--ink-15);padding-top:14px;margin-top:4px}
+  details.done>summary{
+    cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;
+    font-family:var(--display);font-weight:600;text-transform:uppercase;
+    letter-spacing:.13em;font-size:12px;color:var(--ink-45);padding:3px 0;
+  }
+  details.done>summary::-webkit-details-marker{display:none}
+  details.done>summary::before{content:"▸";font-size:11px;transition:transform .15s}
+  details.done[open]>summary::before{transform:rotate(90deg)}
+  details.done>summary:focus-visible{outline:3px solid var(--azure);outline-offset:3px}
+  .done-list{margin-top:11px;opacity:.62}
+  .done-list .row{box-shadow:none;border-width:2px;border-color:var(--ink-15)}
+
+  /* ---------- tbd + footer ---------- */
+  .tbd{
+    border:3px dashed var(--ink-15);padding:12px 14px;margin-top:4px;
+  }
+  .tbd h3{
+    font-family:var(--display);font-weight:600;text-transform:uppercase;
+    letter-spacing:.13em;font-size:11.5px;color:var(--ink-45);
+  }
+  .tbd p{font-family:var(--display);font-weight:600;font-size:17px;margin-top:5px;
+    text-transform:uppercase;letter-spacing:.03em}
+
+  .empty{
+    background:var(--surface);border:3px dashed var(--ink-15);
+    padding:22px 16px;text-align:center;
+  }
+  .empty b{display:block;font-family:var(--display);font-weight:600;
+    text-transform:uppercase;letter-spacing:.1em;font-size:14px}
+  .empty span{display:block;font-size:12.5px;color:var(--ink-70);margin-top:6px}
+
+  footer{
+    max-width:560px;margin:0 auto;padding:22px var(--gut) 40px;
+    border-top:3px solid var(--ink-15);
+    font-size:11px;letter-spacing:.06em;color:var(--ink-45);text-transform:uppercase;
+    font-weight:700;text-align:center;line-height:1.7;
+  }
+
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);
+    white-space:nowrap}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+  @media (min-width:600px){
+    :root{--gut:22px}
+    .slots{max-width:400px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="stripes" aria-hidden="true"></div>
+  <div class="bar hwrap">
+    <div>
+      <div class="brand">Beach&nbsp;Brawl&nbsp;<em>'26</em></div>
+      <div class="venue" id="venueLine">Pensacola Beach · CT</div>
+    </div>
+    <div class="clock">
+      <b class="num" id="clock">—</b>
+      <span>Beach Time</span>
+    </div>
+  </div>
+  <div class="tabs hwrap" role="tablist" aria-label="Competition day">
+    <button class="tab" role="tab" id="tab-saturday" aria-selected="false"
+            aria-controls="panel">Sat · Individuals<small id="satDate">Sep 26</small></button>
+    <button class="tab" role="tab" id="tab-sunday" aria-selected="false"
+            aria-controls="panel">Sun · Teams<small id="sunDate">Sep 27</small></button>
+  </div>
+</header>
+
+<main id="panel" role="tabpanel">
+  <section class="hero" id="hero" aria-live="polite">
+    <div class="hero-k" id="heroK">Loading</div>
+    <div class="hero-v num" id="heroV">—</div>
+    <div class="hero-sub" id="heroSub"></div>
+  </section>
+  <div id="body"></div>
+</main>
+
+<footer>
+  OxFit Crew · Beach Brawl '26<br>
+  All times Pensacola Beach local (Central)
+</footer>
+
+<script id="schedule-data" type="application/json">{"event":"Beach Brawl '26","venue":"Pensacola Beach, FL","timeZone":"America/Chicago","arenas":["Backout Barbell Arena","Mayhem Athlete Arena","LRX Beach Arena","PR Apparel Arena"],"days":[{"id":"saturday","label":"Saturday","date":"2026-09-26","division":"Individuals","heatMinutes":15,"entries":[{"name":"Caitlyn Livingston","arena":"LRX Beach Arena","eventNo":3,"time":"8:15 AM","startSec":29700,"heat":2,"lane":7},{"name":"Debbie Allen","arena":"PR Apparel Arena","eventNo":4,"time":"8:15 AM","startSec":29700,"heat":2,"lane":5},{"name":"Kelsey Graham","arena":"LRX Beach Arena","eventNo":3,"time":"8:15 AM","startSec":29700,"heat":2,"lane":6},{"name":"Caryn Ligon","arena":"LRX Beach Arena","eventNo":3,"time":"8:30 AM","startSec":30600,"heat":3,"lane":8},{"name":"Nick Stanley","arena":"LRX Beach Arena","eventNo":3,"time":"9:15 AM","startSec":33300,"heat":6,"lane":3},{"name":"Ant Oxley","arena":"Backout Barbell Arena","eventNo":1,"time":"9:30 AM","startSec":34200,"heat":7,"lane":5},{"name":"Bailey Barnard","arena":"LRX Beach Arena","eventNo":3,"time":"9:30 AM","startSec":34200,"heat":7,"lane":5},{"name":"Keith Caldwell","arena":"LRX Beach Arena","eventNo":3,"time":"9:30 AM","startSec":34200,"heat":7,"lane":6},{"name":"Adam Morgan","arena":"Backout Barbell Arena","eventNo":1,"time":"9:45 AM","startSec":35100,"heat":8,"lane":4},{"name":"Caitlyn Livingston","arena":"PR Apparel Arena","eventNo":4,"time":"10:35 AM","startSec":38100,"heat":10,"lane":7},{"name":"Debbie Allen","arena":"Backout Barbell Arena","eventNo":1,"time":"10:35 AM","startSec":38100,"heat":10,"lane":5},{"name":"Kelsey Graham","arena":"PR Apparel Arena","eventNo":4,"time":"10:35 AM","startSec":38100,"heat":10,"lane":6},{"name":"Caryn Ligon","arena":"PR Apparel Arena","eventNo":4,"time":"10:50 AM","startSec":39000,"heat":11,"lane":8},{"name":"Nick Stanley","arena":"PR Apparel Arena","eventNo":4,"time":"11:35 AM","startSec":41700,"heat":14,"lane":3},{"name":"Ant Oxley","arena":"Mayhem Athlete Arena","eventNo":2,"time":"11:50 AM","startSec":42600,"heat":15,"lane":5},{"name":"Bailey Barnard","arena":"PR Apparel Arena","eventNo":4,"time":"11:50 AM","startSec":42600,"heat":15,"lane":5},{"name":"Keith Caldwell","arena":"PR Apparel Arena","eventNo":4,"time":"11:50 AM","startSec":42600,"heat":15,"lane":6},{"name":"Adam Morgan","arena":"Mayhem Athlete Arena","eventNo":2,"time":"12:05 PM","startSec":43500,"heat":16,"lane":4},{"name":"Caitlyn Livingston","arena":"Backout Barbell Arena","eventNo":1,"time":"1:15 PM","startSec":47700,"heat":18,"lane":7},{"name":"Debbie Allen","arena":"Mayhem Athlete Arena","eventNo":2,"time":"1:15 PM","startSec":47700,"heat":18,"lane":5},{"name":"Kelsey Graham","arena":"Backout Barbell Arena","eventNo":1,"time":"1:15 PM","startSec":47700,"heat":18,"lane":6},{"name":"Caryn Ligon","arena":"Backout Barbell Arena","eventNo":1,"time":"1:30 PM","startSec":48600,"heat":19,"lane":8},{"name":"Nick Stanley","arena":"Backout Barbell Arena","eventNo":1,"time":"2:15 PM","startSec":51300,"heat":22,"lane":3},{"name":"Ant Oxley","arena":"LRX Beach Arena","eventNo":3,"time":"2:30 PM","startSec":52200,"heat":23,"lane":5},{"name":"Bailey Barnard","arena":"Backout Barbell Arena","eventNo":1,"time":"2:30 PM","startSec":52200,"heat":23,"lane":5},{"name":"Keith Caldwell","arena":"Backout Barbell Arena","eventNo":1,"time":"2:30 PM","startSec":52200,"heat":23,"lane":6},{"name":"Adam Morgan","arena":"LRX Beach Arena","eventNo":3,"time":"2:45 PM","startSec":53100,"heat":24,"lane":4},{"name":"Caitlyn Livingston","arena":"Mayhem Athlete Arena","eventNo":2,"time":"3:45 PM","startSec":56700,"heat":26,"lane":7},{"name":"Debbie Allen","arena":"LRX Beach Arena","eventNo":3,"time":"3:45 PM","startSec":56700,"heat":26,"lane":5},{"name":"Kelsey Graham","arena":"Mayhem Athlete Arena","eventNo":2,"time":"3:45 PM","startSec":56700,"heat":26,"lane":6},{"name":"Caryn Ligon","arena":"Mayhem Athlete Arena","eventNo":2,"time":"4:00 PM","startSec":57600,"heat":27,"lane":8},{"name":"Nick Stanley","arena":"Mayhem Athlete Arena","eventNo":2,"time":"4:45 PM","startSec":60300,"heat":30,"lane":3},{"name":"Ant Oxley","arena":"PR Apparel Arena","eventNo":4,"time":"5:00 PM","startSec":61200,"heat":31,"lane":5},{"name":"Bailey Barnard","arena":"Mayhem Athlete Arena","eventNo":2,"time":"5:00 PM","startSec":61200,"heat":31,"lane":5},{"name":"Keith Caldwell","arena":"Mayhem Athlete Arena","eventNo":2,"time":"5:00 PM","startSec":61200,"heat":31,"lane":6},{"name":"Adam Morgan","arena":"PR Apparel Arena","eventNo":4,"time":"5:15 PM","startSec":62100,"heat":32,"lane":4}],"tbd":["Savannah Branch","Whitney Dunn"]},{"id":"sunday","label":"Sunday","date":"2026-09-27","division":"Teams","heatMinutes":17,"entries":[{"name":"Ox Mommies","arena":"PR Apparel Arena","eventNo":4,"time":"8:00 AM","startSec":28800,"heat":1,"lane":2},{"name":"OxFit Average Bros","arena":"Backout Barbell Arena","eventNo":1,"time":"8:17 AM","startSec":29820,"heat":2,"lane":1},{"name":"OxFit Bad Moms","arena":"LRX Beach Arena","eventNo":3,"time":"8:51 AM","startSec":31860,"heat":4,"lane":2},{"name":"OxFit Black","arena":"PR Apparel Arena","eventNo":4,"time":"9:08 AM","startSec":32880,"heat":5,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"PR Apparel Arena","eventNo":4,"time":"9:25 AM","startSec":33900,"heat":6,"lane":8},{"name":"Ox Mommies","arena":"Backout Barbell Arena","eventNo":1,"time":"10:20 AM","startSec":37200,"heat":8,"lane":2},{"name":"OxFit Average Bros","arena":"Mayhem Athlete Arena","eventNo":2,"time":"10:37 AM","startSec":38220,"heat":9,"lane":1},{"name":"OxFit Bad Moms","arena":"PR Apparel Arena","eventNo":4,"time":"11:11 AM","startSec":40260,"heat":11,"lane":2},{"name":"OxFit Black","arena":"Backout Barbell Arena","eventNo":1,"time":"11:28 AM","startSec":41280,"heat":12,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"Backout Barbell Arena","eventNo":1,"time":"11:45 AM","startSec":42300,"heat":13,"lane":8},{"name":"Ox Mommies","arena":"Mayhem Athlete Arena","eventNo":2,"time":"1:00 PM","startSec":46800,"heat":15,"lane":2},{"name":"OxFit Average Bros","arena":"LRX Beach Arena","eventNo":3,"time":"1:17 PM","startSec":47820,"heat":16,"lane":2},{"name":"OxFit Bad Moms","arena":"Backout Barbell Arena","eventNo":1,"time":"1:51 PM","startSec":49860,"heat":18,"lane":2},{"name":"OxFit Black","arena":"Mayhem Athlete Arena","eventNo":2,"time":"2:08 PM","startSec":50880,"heat":19,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"Mayhem Athlete Arena","eventNo":2,"time":"2:25 PM","startSec":51900,"heat":20,"lane":8},{"name":"Ox Mommies","arena":"LRX Beach Arena","eventNo":3,"time":"3:30 PM","startSec":55800,"heat":22,"lane":2},{"name":"OxFit Average Bros","arena":"PR Apparel Arena","eventNo":4,"time":"3:47 PM","startSec":56820,"heat":23,"lane":1},{"name":"OxFit Bad Moms","arena":"Mayhem Athlete Arena","eventNo":2,"time":"4:21 PM","startSec":58860,"heat":25,"lane":2},{"name":"OxFit Black","arena":"LRX Beach Arena","eventNo":3,"time":"4:38 PM","startSec":59880,"heat":26,"lane":4},{"name":"OxFit 2Legit 2Quit","arena":"LRX Beach Arena","eventNo":3,"time":"4:55 PM","startSec":60900,"heat":27,"lane":8}],"tbd":[]}]}</script>
+<script>
+(function(){
+  "use strict";
+
+  var DATA = JSON.parse(document.getElementById('schedule-data').textContent);
+  var TZ = DATA.timeZone;
+
+  /* ==================================================================
+     Time: everything resolves to epoch milliseconds so that countdowns
+     are true elapsed time, and all wall-clock values are interpreted in
+     the venue's zone regardless of where the viewer's device is set.
+     ================================================================== */
+
+  var partsFmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: TZ, hour12: false,
+    year:'numeric', month:'2-digit', day:'2-digit',
+    hour:'2-digit', minute:'2-digit', second:'2-digit'
+  });
+
+  function venueParts(ms){
+    var o = {};
+    partsFmt.formatToParts(new Date(ms)).forEach(function(p){
+      if (p.type !== 'literal') o[p.type] = +p.value;
+    });
+    // Intl can emit hour 24 for midnight under hour12:false
+    if (o.hour === 24) o.hour = 0;
+    return o;
+  }
+
+  // Offset (ms) by which venue wall-clock leads UTC at a given instant.
+  function venueOffset(ms){
+    var p = venueParts(ms);
+    return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second) - ms;
+  }
+
+  // Venue wall-clock ("2026-09-26", secondsFromMidnight) -> epoch ms.
+  // Two passes so the offset is sampled at the resolved instant, which
+  // keeps it correct across a DST boundary.
+  function wallToEpoch(dateISO, sec){
+    var d = dateISO.split('-');
+    var naive = Date.UTC(+d[0], +d[1] - 1, +d[2]) + sec * 1000;
+    var t = naive - venueOffset(naive);
+    return naive - venueOffset(t);
+  }
+
+  function venueDateISO(ms){
+    var p = venueParts(ms);
+    return p.year + '-' + String(p.month).padStart(2,'0') + '-' +
+           String(p.day).padStart(2,'0');
+  }
+
+  /* ---- clock source, overridable via ?now= for testing ---- */
+  var frozen = null;
+  var qs = new URLSearchParams(location.search);
+  if (qs.has('now')) {
+    var m = /^(\d{4}-\d{2}-\d{2})[T ](\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(qs.get('now').trim());
+    if (m) frozen = wallToEpoch(m[1], (+m[2])*3600 + (+m[3])*60 + (+(m[4]||0)));
+  }
+  function now(){ return frozen !== null ? frozen : Date.now(); }
+
+  /* ---- formatting ---- */
+  function fmtClock(ms){
+    var p = venueParts(ms), h = p.hour % 12; if (h === 0) h = 12;
+    return h + ':' + String(p.minute).padStart(2,'0') +
+           ' ' + (p.hour < 12 ? 'AM' : 'PM');
+  }
+  function fmtDur(sec){
+    sec = Math.max(0, Math.floor(sec));
+    var d = Math.floor(sec/86400), h = Math.floor(sec%86400/3600),
+        m = Math.floor(sec%3600/60), s = sec%60, p2 = function(n){return String(n).padStart(2,'0')};
+    if (d > 0) return d + 'd ' + h + 'h ' + p2(m) + 'm';
+    if (h > 0) return h + ':' + p2(m) + ':' + p2(s);
+    return m + ':' + p2(s);
+  }
+  // The hero countdown sits right under a live wall clock, so "20:00" on its
+  // own is ambiguous. Attach an explicit unit unless the value already
+  // carries one (the multi-day form does).
+  function durHTML(sec){
+    sec = Math.max(0, Math.floor(sec));
+    var unit = sec < 3600 ? 'Min' : (sec < 86400 ? 'Hrs' : '');
+    return fmtDur(sec) + (unit ? '<small>' + unit + '</small>' : '');
+  }
+  function fmtMins(sec){
+    var m = Math.round(sec/60);
+    if (m < 60) return m + ' min';
+    var h = Math.floor(m/60);
+    return h + 'h ' + String(m%60).padStart(2,'0') + 'm';
+  }
+  function shortArena(a){ return a.replace(/\s+Arena$/i,''); }
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+
+  /* ==================================================================
+     State
+     ================================================================== */
+
+  var DAYS = {};
+  DATA.days.forEach(function(d){ DAYS[d.id] = d; });
+
+  function dayBounds(day){
+    var starts = day.entries.map(function(e){ return wallToEpoch(day.date, e.startSec); });
+    return {
+      first: Math.min.apply(null, starts),
+      last:  Math.max.apply(null, starts) + day.heatMinutes * 60000
+    };
+  }
+
+  // Saturday until its last heat has finished, Sunday from then on — so
+  // Saturday evening already shows the teams their Sunday times.
+  function autoDay(t){
+    return t < dayBounds(DAYS.saturday).last ? 'saturday' : 'sunday';
+  }
+
+  var selected = null; // null = follow the calendar
+
+  function classify(day, t){
+    var dur = day.heatMinutes * 60000;
+    var live = [], upcoming = [], done = [];
+    day.entries.forEach(function(e){
+      var s = wallToEpoch(day.date, e.startSec), end = s + dur;
+      var row = { e:e, start:s, end:end };
+      if (t >= end) done.push(row);
+      else if (t >= s) live.push(row);
+      else upcoming.push(row);
+    });
+    var byStart = function(a,b){ return a.start - b.start || a.e.name.localeCompare(b.e.name); };
+    live.sort(byStart); upcoming.sort(byStart); done.sort(byStart);
+    var nextStart = upcoming.length ? upcoming[0].start : null;
+    return {
+      live: live, upcoming: upcoming, done: done, nextStart: nextStart,
+      next: upcoming.filter(function(r){ return r.start === nextStart; }),
+      later: upcoming.filter(function(r){ return r.start !== nextStart; }),
+      liveEnd: live.length ? Math.min.apply(null, live.map(function(r){return r.end})) : null
+    };
+  }
+
+  /* ==================================================================
+     Render
+     ================================================================== */
+
+  function groupByStart(rows){
+    var out = [], cur = null;
+    rows.forEach(function(r){
+      if (!cur || cur.start !== r.start) { cur = { start:r.start, rows:[] }; out.push(cur); }
+      cur.rows.push(r);
+    });
+    return out;
+  }
+
+  function rowHTML(r, cls){
+    return '<div class="row ' + (cls||'') + '">' +
+      '<div class="who"><b>' + esc(r.e.name) + '</b>' +
+      '<span>' + esc(shortArena(r.e.arena)) + ' · Event ' + r.e.eventNo + '</span></div>' +
+      '<div class="hl num">' + r.e.heat + ' / ' + r.e.lane +
+      '<small>Heat / Lane</small></div></div>';
+  }
+
+  function groupHTML(g, cls){
+    return '<div class="grp"><div class="grp-t"><b class="num">' + fmtClock(g.start) +
+      '</b><span>' + g.rows.length + (g.rows.length === 1 ? ' up' : ' up') + '</span></div>' +
+      g.rows.map(function(r){ return rowHTML(r, cls); }).join('') + '</div>';
+  }
+
+  function secHTML(title, count, inner){
+    return '<section class="sec"><div class="sec-h"><h2>' + title + '</h2>' +
+      '<div class="rule"></div>' +
+      (count != null ? '<div class="cnt num">' + count + '</div>' : '') +
+      '</div>' + inner + '</section>';
+  }
+
+  function tbdHTML(day){
+    if (!day.tbd || !day.tbd.length) return '';
+    return '<div class="tbd"><h3>Not yet scheduled</h3><p>' +
+      day.tbd.map(esc).join(' · ') + '</p></div>';
+  }
+
+  function render(){
+    var t = now();
+    var dayId = selected || autoDay(t);
+    var day = DAYS[dayId];
+    var b = dayBounds(day);
+    var isToday = venueDateISO(t) === day.date;
+    var c = classify(day, t);
+
+    document.getElementById('clock').textContent = fmtClock(t);
+
+    ['saturday','sunday'].forEach(function(id){
+      document.getElementById('tab-' + id)
+        .setAttribute('aria-selected', String(id === dayId));
+    });
+
+    var hero = document.getElementById('hero'),
+        heroK = document.getElementById('heroK'),
+        heroV = document.getElementById('heroV'),
+        heroSub = document.getElementById('heroSub'),
+        out = [];
+
+    hero.classList.remove('is-live');
+
+    if (t < b.first) {
+      /* ---- before this day's first heat ---- */
+      var away = (b.first - t) / 1000;
+      heroK.textContent = isToday ? 'First heat today' : 'First heat ' + day.label.toLowerCase();
+      heroV.className = 'hero-v num';
+      heroV.innerHTML = durHTML(away);
+      heroSub.textContent = fmtClock(b.first) + ' · ' + day.division + ' · ' +
+        (day.entries.length / 4) + ' ' + (dayId === 'sunday' ? 'teams' : 'athletes');
+
+      out.push(secHTML(day.label + ' schedule', day.entries.length,
+        groupByStart(day.entries.map(function(e){
+          return { e:e, start: wallToEpoch(day.date, e.startSec) };
+        }).sort(function(a,x){ return a.start - x.start || a.e.name.localeCompare(x.e.name); }))
+        .map(function(g){ return groupHTML(g); }).join('')));
+      out.push(tbdHTML(day));
+
+    } else if (t >= b.last) {
+      /* ---- day finished ---- */
+      heroK.textContent = day.label + ' complete';
+      heroV.className = 'hero-v words';
+      heroV.textContent = 'That’s a wrap';
+      heroSub.textContent = day.entries.length + ' heats done · last at ' +
+        fmtClock(b.last - day.heatMinutes * 60000);
+      out.push(secHTML(day.label + ' results order', day.entries.length,
+        '<details class="done" open><summary>Full day</summary><div class="done-list">' +
+        groupByStart(c.done).map(function(g){ return groupHTML(g); }).join('') +
+        '</div></details>'));
+      out.push(tbdHTML(day));
+
+    } else {
+      /* ---- day in progress ---- */
+      heroV.className = 'hero-v num';
+
+      if (c.live.length) {
+        hero.classList.add('is-live');
+        heroK.innerHTML = '<span class="dot"></span>On now';
+        heroV.innerHTML = durHTML((c.liveEnd - t) / 1000);
+        heroSub.textContent = 'Ends ' + fmtClock(c.liveEnd) + ' · ' + c.live.length +
+          (dayId === 'sunday' ? ' on the floor' : (c.live.length === 1 ? ' athlete up' : ' athletes up'));
+        out.push(secHTML('On the floor', c.live.length,
+          c.live.map(function(r){
+            return '<div class="now-card">' +
+              '<div class="now-name">' + esc(r.e.name) + '</div>' +
+              '<div class="now-arena">' + esc(r.e.arena) + '</div>' +
+              '<div class="slots">' +
+                '<div class="slot"><i>Heat</i><b class="num">' + r.e.heat + '</b></div>' +
+                '<div class="slot"><i>Lane</i><b class="num">' + r.e.lane + '</b></div>' +
+                '<div class="slot time"><i>Started</i><b class="num">' +
+                  fmtClock(r.start) + '</b></div>' +
+              '</div></div>';
+          }).join('')));
+      } else {
+        heroK.textContent = 'Nobody up right now';
+        heroV.innerHTML = c.nextStart ? durHTML((c.nextStart - t) / 1000) : '—';
+        heroSub.textContent = c.nextStart
+          ? 'Until ' + esc(c.next[0].e.name) + ' at ' + fmtClock(c.nextStart)
+          : 'No crew heats left today';
+      }
+
+      if (c.next.length) {
+        out.push(secHTML('Up next · ' + fmtMins((c.nextStart - t) / 1000), c.next.length,
+          c.next.map(function(r){ return rowHTML(r, 'next'); }).join('')));
+      }
+
+      if (c.later.length) {
+        out.push(secHTML('Later today', c.later.length,
+          groupByStart(c.later).map(function(g){ return groupHTML(g); }).join('')));
+      } else if (!c.next.length) {
+        out.push('<div class="empty"><b>All done for today</b>' +
+          '<span>Every crew heat is complete.</span></div>');
+      }
+
+      out.push(tbdHTML(day));
+
+      if (c.done.length) {
+        out.push('<details class="done"><summary>Earlier today · ' + c.done.length +
+          ' done</summary><div class="done-list">' +
+          groupByStart(c.done).map(function(g){ return groupHTML(g); }).join('') +
+          '</div></details>');
+      }
+    }
+
+    if (!isToday && t >= b.first && t < b.last) { /* only possible via ?now= */ }
+    document.getElementById('body').innerHTML = out.join('');
+  }
+
+  /* ---- tabs ---- */
+  ['saturday','sunday'].forEach(function(id){
+    document.getElementById('tab-' + id).addEventListener('click', function(){
+      selected = id; render();
+    });
+  });
+
+  /* ---- date labels ---- */
+  (function(){
+    var f = new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',timeZone:'UTC'});
+    document.getElementById('satDate').textContent =
+      f.format(new Date(DAYS.saturday.date + 'T12:00:00Z'));
+    document.getElementById('sunDate').textContent =
+      f.format(new Date(DAYS.sunday.date + 'T12:00:00Z'));
+    if (frozen !== null) {
+      document.getElementById('venueLine').textContent = 'Pensacola Beach · simulated time';
+    }
+  })();
+
+  render();
+  setInterval(render, 1000);
+})();
+</script>
+</body>
+</html>
