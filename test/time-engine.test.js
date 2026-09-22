@@ -117,9 +117,13 @@ t('exact start counts as live, not upcoming', () => {
 t('one second before start, heat 7 is next not live', () => {
   const c = classify(SAT, at(SAT, '9:30') - 1000);
   assert.strictEqual(c.live.filter(r => r.e.heat === 7).length, 0, 'heat 7 must not be live yet');
-  assert.strictEqual(c.next.length, 3, 'all three heat-7 entries queued as next');
-  // Nick Stanley's 9:15 heat legitimately overlaps and is still running.
-  assert.deepStrictEqual(c.live.map(r => r.e.name), ['Nick Stanley']);
+  assert.deepStrictEqual(
+    c.next.map(r => r.e.name).sort(),
+    SAT.entries.filter(e => e.heat === 7).map(e => e.name).sort());
+  // The 9:15 heat legitimately overlaps and is still running.
+  assert.deepStrictEqual(
+    c.live.map(r => r.e.name).sort(),
+    SAT.entries.filter(e => e.time === '9:15 AM').map(e => e.name).sort());
 });
 t('last second of the heat is still live', () => {
   const c = classify(SAT, at(SAT, '9:30') + 15 * 60000 - 1000);
@@ -143,7 +147,9 @@ t('11:15 AM Saturday is a real gap with next at 11:35', () => {
   const c = classify(SAT, at(SAT, '11:15'));
   assert.strictEqual(c.live.length, 0, 'expected nobody live');
   assert.strictEqual(fmtClock(c.nextStart), '11:35 AM');
-  assert.strictEqual(c.next[0].e.name, 'Nick Stanley');
+  assert.deepStrictEqual(
+    c.next.map(r => r.e.name).sort(),
+    SAT.entries.filter(e => e.time === '11:35 AM').map(e => e.name).sort());
 });
 t('10:55 AM is NOT a gap — Caryn Ligon is mid-heat', () => {
   const c = classify(SAT, at(SAT, '10:55'));
@@ -165,11 +171,11 @@ t('Saturday has seven crew gaps of 5 min or more', () => {
 t('pre-first-heat has no done entries', () => {
   const c = classify(SAT, at(SAT, '7:00'));
   assert.strictEqual(c.done.length, 0);
-  assert.strictEqual(c.upcoming.length, 36);
+  assert.strictEqual(c.upcoming.length, SAT.entries.length);
 });
 t('after last heat everything is done', () => {
   const c = classify(SAT, at(SAT, '18:00'));
-  assert.strictEqual(c.done.length, 36);
+  assert.strictEqual(c.done.length, SAT.entries.length);
   assert.strictEqual(c.live.length, 0);
   assert.strictEqual(c.nextStart, null);
 });
@@ -247,7 +253,8 @@ t('completed rows are marked done, upcoming rows are unmarked', () => {
   const html = arenaSections(SAT, classify(SAT, at(SAT, '14:31')));
   const rows = [...html.matchAll(/<div class="arow ([^"]*)">\s*<b class="t num">([^<]+)<\/b><div class="who">([^<]+)</g)]
     .map(m => ({ cls: m[1].trim(), time: m[2], name: m[3] }));
-  assert.strictEqual(rows.length, 36, 'every entry should render exactly once');
+  assert.strictEqual(rows.length, SAT.entries.length,
+    'every entry should render exactly once');
   const antE1 = rows.find(r => r.name === 'Ant Oxley' && r.time === '9:30 AM');
   assert.strictEqual(antE1.cls, 'is-done');
   const antLive = rows.find(r => r.name === 'Ant Oxley' && r.time === '2:30 PM');

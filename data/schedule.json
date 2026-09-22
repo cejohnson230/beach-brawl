@@ -54,6 +54,15 @@
           "lane": 8
         },
         {
+          "name": "Anaya Reddick",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "9:15 AM",
+          "startSec": 33300,
+          "heat": 6,
+          "lane": 8
+        },
+        {
           "name": "Nick Stanley",
           "arena": "LRX Beach Arena",
           "eventNo": 3,
@@ -132,6 +141,15 @@
           "time": "10:50 AM",
           "startSec": 39000,
           "heat": 11,
+          "lane": 8
+        },
+        {
+          "name": "Anaya Reddick",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "11:35 AM",
+          "startSec": 41700,
+          "heat": 14,
           "lane": 8
         },
         {
@@ -216,6 +234,15 @@
           "lane": 8
         },
         {
+          "name": "Anaya Reddick",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "2:15 PM",
+          "startSec": 51300,
+          "heat": 22,
+          "lane": 8
+        },
+        {
           "name": "Nick Stanley",
           "arena": "Backout Barbell Arena",
           "eventNo": 1,
@@ -294,6 +321,15 @@
           "time": "4:00 PM",
           "startSec": 57600,
           "heat": 27,
+          "lane": 8
+        },
+        {
+          "name": "Anaya Reddick",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "4:45 PM",
+          "startSec": 60300,
+          "heat": 30,
           "lane": 8
         },
         {
