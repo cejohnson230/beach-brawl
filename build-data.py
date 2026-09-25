@@ -8,6 +8,7 @@ import csv, json, re, sys, pathlib
 
 ROOT = pathlib.Path(__file__).parent
 SRC = ROOT / "data" / "heat-sheet.csv"
+FRI = ROOT / "data" / "friday-heat-sheet.csv"
 OUT = ROOT / "data" / "schedule.json"
 
 ARENAS = [
@@ -16,6 +17,8 @@ ARENAS = [
     "LRX Beach Arena",
     "PR Apparel Arena",
 ]
+# Friday is a single event on the beach itself, not one of the four arenas.
+FRIDAY_ARENA = "Elite Beach Event"
 
 HEAT_LANE = re.compile(r"Heat\s+(\d+)\s+Lane\s+(\d+)", re.I)
 
@@ -71,8 +74,34 @@ def parse():
     return individuals, teams, tbd_ind, tbd_team
 
 
+def parse_friday():
+    """Friday runs one event, so its sheet is a single time/heat/lane column."""
+    out = []
+    if not FRI.exists():
+        return out
+    for row in csv.reader(FRI.open()):
+        if not row or not row[0].strip() or row[0].strip().upper() == "ATHLETE":
+            continue
+        name, time_cell, hl_cell = (x.strip() for x in row[:3])
+        hl = HEAT_LANE.search(hl_cell)
+        if not hl:
+            raise ValueError(f"{name}: unparseable {hl_cell!r}")
+        out.append({
+            "name": name,
+            "arena": FRIDAY_ARENA,
+            "eventNo": 1,
+            "time": time_cell,
+            "startSec": to_seconds(time_cell),
+            "heat": int(hl.group(1)),
+            "lane": int(hl.group(2)),
+        })
+    out.sort(key=lambda e: (e["startSec"], e["lane"]))
+    return out
+
+
 def main():
     ind, team, tbd_i, tbd_t = parse()
+    fri = parse_friday()
     for b in (ind, team):
         b.sort(key=lambda e: (e["startSec"], e["name"]))
 
@@ -80,8 +109,14 @@ def main():
         "event": "Beach Brawl '26",
         "venue": "Pensacola Beach, FL",
         "timeZone": "America/Chicago",
-        "arenas": ARENAS,
+        "arenas": ARENAS + [FRIDAY_ARENA],
         "days": [
+            # The Elite Beach Event has no published time cap; 45 minutes is an
+            # estimate for a 500m swim, two 800m runs, two sled pulls and a
+            # 1000m ski, and only decides when a heat stops reading as live.
+            {"id": "friday", "label": "Friday", "date": "2026-09-25",
+             "division": "Elite Beach Event", "heatMinutes": 45, "wodKey": "elite",
+             "entries": fri, "tbd": []},
             {"id": "saturday", "label": "Saturday", "date": "2026-09-26",
              "division": "Individuals", "heatMinutes": 15, "wodKey": "individual",
              "entries": ind, "tbd": tbd_i},
@@ -97,19 +132,21 @@ def main():
         errs.append("no individual entries parsed")
     if not team:
         errs.append("no team entries parsed")
-    for b, label in ((ind, "individual"), (team, "team")):
-        if len(b) % 4:
-            errs.append(f"{len(b)} {label} entries is not a whole number of "
-                        f"competitors (4 events each)")
+    if not fri:
+        errs.append("no Friday entries parsed")
 
     for day in data["days"]:
+        if not day["entries"]:
+            errs.append(f"{day['id']}: no entries")
+            continue
+        events = {e["eventNo"] for e in day["entries"]}
         by_person = {}
         for e in day["entries"]:
             by_person.setdefault(e["name"], []).append(e)
         for name, es in by_person.items():
-            if len(es) != 4:
-                errs.append(f"{name}: {len(es)} entries, expected 4")
-            if len({e["arena"] for e in es}) != 4:
+            if len(es) != len(events):
+                errs.append(f"{name}: {len(es)} entries, expected {len(events)}")
+            if len({e["arena"] for e in es}) != len(es):
                 errs.append(f"{name}: duplicate arena")
         # no one in two places at once
         seen = {}
@@ -147,12 +184,15 @@ def main():
                 errs.append(f"{e['name']} {e['time']} -> implausible {e['startSec']}s")
 
     for day in data["days"]:
-        heats = {e["heat"] for e in day["entries"]}
-        day["heatCount"] = len(heats)
+        day["heatCount"] = len({e["heat"] for e in day["entries"]})
+        day["competitors"] = len({e["name"] for e in day["entries"]})
 
+    print(f"friday:      {len(fri)} entries, {len(fri)} athletes")
     print(f"individuals: {len(ind)} entries, {len(ind)//4} athletes, tbd={tbd_i}")
     print(f"teams:       {len(team)} entries, {len(team)//4} teams, tbd={tbd_t}")
     for day in data["days"]:
+        if not day["entries"]:
+            continue
         hs = sorted({(e["heat"], e["time"]) for e in day["entries"]})
         print(f"{day['id']}: {len(hs)} distinct heats, "
               f"{hs[0][1]} -> {hs[-1][1]}")
@@ -174,6 +214,8 @@ def main():
     if wods:
         keyword = {1: "barbell", 2: "mayhem", 3: "lrx", 4: "apparel"}
         for day in data["days"]:
+            if day["wodKey"] == "elite":
+                continue
             for e in day["entries"]:
                 n = e["eventNo"]
                 site = wods.get(day["wodKey"], {}).get(str(n), {}).get("arena", "")

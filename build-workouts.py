@@ -14,6 +14,7 @@ import json
 import pathlib
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 
@@ -25,7 +26,12 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
 
 # (day, event number) -> page slug. Note the organisers' slugs are not
 # consistently named; event 3 of each day uses a different prefix.
+# The Elite Beach Event page names no arena (it is the beach itself), so it
+# carries an explicit one.
+ARENA_OVERRIDE = {("elite", 1): "Elite Beach Event"}
+
 PAGES = {
+    ("elite", 1): "elite-beach-event",
     ("individual", 1): "fall-2026-individual-event-1",
     ("individual", 2): "fall-2026-individual-event-2",
     ("individual", 3): "2026-fall-individual-event-3",
@@ -74,14 +80,29 @@ def content_block(lines):
     return lines[start + 1:end]
 
 
+def fetch(url, tries=3):
+    """The organisers' host returns Cloudflare 522s under load, which it is
+    under all event week. Retry before giving up on a page."""
+    last = None
+    for attempt in range(tries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return r.read().decode("utf-8", "replace")
+        except Exception as e:                      # noqa: BLE001
+            last = e
+            if attempt + 1 < tries:
+                time.sleep(2 * (attempt + 1))
+    raise last
+
+
 def parse(slug, day, event_no):
-    req = urllib.request.Request(BASE + slug + "/", headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        raw = r.read().decode("utf-8", "replace")
+    raw = fetch(BASE + slug + "/")
 
     body = content_block(text_lines(raw))
 
-    arena = next((l for l in body[:6] if re.search(r"arena", l, re.I)), "")
+    arena = ARENA_OVERRIDE.get((day, event_no)) or \
+        next((l for l in body[:6] if re.search(r"arena", l, re.I)), "")
     cap = ""
     fmt = []
     notes = []
@@ -166,21 +187,38 @@ def parse(slug, day, event_no):
 
 
 def main():
-    workouts, errs = {"individual": {}, "team": {}}, []
+    # Start from what is already committed: a page that fails to fetch keeps
+    # its previous copy rather than taking the whole build down with it.
+    workouts = json.loads(OUT.read_text()) if OUT.exists() else {}
+    for key in ("elite", "individual", "team"):
+        workouts.setdefault(key, {})
+
+    errs = []
     for (day, no), slug in sorted(PAGES.items()):
+        cached = workouts[day].get(str(no))
         try:
             w = parse(slug, day, no)
-        except urllib.error.URLError as e:
-            errs.append(f"{day} event {no}: fetch failed ({e})")
+        except Exception as e:                       # noqa: BLE001
+            if cached:
+                print(f"{day:11s} event {no}  kept cached copy ({type(e).__name__})")
+                continue
+            errs.append(f"{day} event {no}: fetch failed and nothing cached ({e})")
             continue
         if not w["divisions"]:
             errs.append(f"{day} event {no}: no movements parsed")
+            continue
         if not w["arena"]:
             errs.append(f"{day} event {no}: no arena found")
+            continue
         workouts[day][str(no)] = w
         print(f"{day:11s} event {no}  {w['arena']:24s} "
               f"{w['cap'] or '--:--':>6s}  "
               f"{len(w['divisions'])} divisions")
+
+    for day, count in (("elite", 1), ("individual", 4), ("team", 4)):
+        missing = [n for n in range(1, count + 1) if str(n) not in workouts[day]]
+        if missing:
+            errs.append(f"{day}: no workout for event(s) {missing}")
 
     if errs:
         print("\nSCRAPE FAILED — nothing written:", file=sys.stderr)

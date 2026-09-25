@@ -464,5 +464,31 @@
       ],
       "url": "https://pensacolabeachbrawl.com/fall-2026-team-event-4/"
     }
+  },
+  "elite": {
+    "1": {
+      "day": "elite",
+      "eventNo": 1,
+      "arena": "Elite Beach Event",
+      "format": "For time",
+      "cap": "",
+      "notes": [],
+      "divisions": [
+        {
+          "name": "All divisions",
+          "lines": [
+            "500 Meter Swim",
+            "150 ft. Sandbag Carry (100/80)",
+            "800 Meter Run",
+            "100 ft. Sled Pull (135/90)",
+            "800 Meter Run",
+            "100 ft. Sled Pull (135/90)",
+            "1000 Meter Ski"
+          ]
+        }
+      ],
+      "flow": [],
+      "url": "https://pensacolabeachbrawl.com/elite-beach-event/"
+    }
   }
 }

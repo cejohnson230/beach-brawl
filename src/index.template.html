@@ -28,6 +28,8 @@
     --coral-ink:#C43A1A;
     --sea-ink:#00705A;
     --sun-ink:#8A5A00;
+    --surf:#9B5DE5;
+    --surf-ink:#5E2E96;
     --display:'Oswald',Impact,sans-serif;
     --body:'Lato',system-ui,sans-serif;
     --bd:3px solid var(--ink);
@@ -61,6 +63,7 @@
   .a1{--ac:var(--coral);--acd:var(--coral-ink)}  /* Event 2 · Mayhem Athlete  */
   .a2{--ac:var(--sea);  --acd:var(--sea-ink)}    /* Event 3 · LRX Beach       */
   .a3{--ac:var(--sun);  --acd:var(--sun-ink)}    /* Event 4 · PR Apparel      */
+  .a4{--ac:var(--surf); --acd:var(--surf-ink)}   /* Friday · Elite Beach      */
 
   /* ---------- header ---------- */
   header{
@@ -100,13 +103,14 @@
     background:transparent;color:rgba(251,244,230,.6);
     border:2px solid rgba(251,244,230,.28);
     font-family:var(--display);font-weight:600;text-transform:uppercase;
-    letter-spacing:.07em;font-size:12.5px;padding:9px 4px 8px;line-height:1.2;
+    letter-spacing:.05em;font-size:12px;padding:9px 3px 8px;line-height:1.2;
     transition:background .14s,color .14s,border-color .14s;
   }
-  .tab:first-child{border-right-width:1px}
-  .tab:last-child{border-left-width:1px}
-  .tab small{display:block;font-size:9px;letter-spacing:.13em;opacity:.8;
-    font-weight:500;margin-top:2px}
+  .tab + .tab{border-left-width:1px}
+  .tab:not(:last-child){border-right-width:1px}
+  .tab small{display:block;font-size:8.5px;letter-spacing:.09em;opacity:.8;
+    font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis}
   .tab[aria-selected="true"]{
     background:var(--azure);color:#fff;border-color:var(--azure);
   }
@@ -475,12 +479,7 @@
       <span>Beach Time</span>
     </div>
   </div>
-  <div class="tabs hwrap" role="tablist" aria-label="Competition day">
-    <button class="tab" role="tab" id="tab-saturday" aria-selected="false"
-            aria-controls="panel">Sat · Individuals<small id="satDate">Sep 26</small></button>
-    <button class="tab" role="tab" id="tab-sunday" aria-selected="false"
-            aria-controls="panel">Sun · Teams<small id="sunDate">Sep 27</small></button>
-  </div>
+  <div class="tabs hwrap" id="tabs" role="tablist" aria-label="Competition day"></div>
 </header>
 
 <main id="panel" role="tabpanel">
@@ -665,6 +664,16 @@
     return divs[0];
   }
 
+  // Saturday and Sunday run four arenas; Friday runs one event on the beach.
+  // Both views walk the day's own events rather than the global arena list.
+  function dayEvents(day){
+    var seen = {}, out = [];
+    day.entries.forEach(function(e){
+      if (!seen[e.eventNo]) { seen[e.eventNo] = 1; out.push({ no: e.eventNo, arena: e.arena }); }
+    });
+    return out.sort(function(a, b){ return a.no - b.no; });
+  }
+
   function wodTag(day, eventNo){
     var w = wodFor(day, eventNo);
     if (!w) return '';
@@ -694,10 +703,13 @@
     };
   }
 
-  // Saturday until its last heat has finished, Sunday from then on — so
-  // Saturday evening already shows the teams their Sunday times.
+  // Each day until its last heat has finished, then the next — so Friday
+  // evening already shows Saturday, and Saturday evening shows Sunday.
   function autoDay(t){
-    return t < dayBounds(DAYS.saturday).last ? 'saturday' : 'sunday';
+    for (var i = 0; i < DATA.days.length - 1; i++) {
+      if (t < dayBounds(DATA.days[i]).last) return DATA.days[i].id;
+    }
+    return DATA.days[DATA.days.length - 1].id;
   }
 
   var selected = null; // null = follow the calendar
@@ -780,17 +792,18 @@
     c.live.forEach(function(r){ status[key(r.e)] = 'is-live'; });
     c.next.forEach(function(r){ status[key(r.e)] = 'is-next'; });
 
-    return DATA.arenas.map(function(arena, i){
+    return dayEvents(day).map(function(ev){
+      var arena = ev.arena;
       var rows = day.entries.filter(function(e){ return e.arena === arena; })
         .sort(function(a, b){
           return a.startSec - b.startSec || a.name.localeCompare(b.name);
         });
       if (!rows.length) return '';
       return '<section class="sec ' + arenaCls(arena) + '">' +
-        '<div class="arena-h"><i>Event ' + (i + 1) + '</i><b>' +
+        '<div class="arena-h"><i>Event ' + ev.no + '</i><b>' +
           esc(arena) + '</b></div>' +
-        (wodTag(day, i + 1)
-          ? '<div class="tagline">' + esc(wodTag(day, i + 1)) + '</div>' : '') +
+        (wodTag(day, ev.no)
+          ? '<div class="tagline">' + esc(wodTag(day, ev.no)) + '</div>' : '') +
         rows.map(function(e){
           var st = status[key(e)] || '';
           var tag = st === 'is-live' ? '<span class="tag">Now</span>'
@@ -845,8 +858,8 @@
     var nextEvents = {};
     c.next.forEach(function(r){ nextEvents[r.e.eventNo] = 1; });
 
-    return DATA.arenas.map(function(arena, i){
-      var no = i + 1, w = wodFor(day, no);
+    return dayEvents(day).map(function(ev){
+      var arena = ev.arena, no = ev.no, w = wodFor(day, no);
       if (!w) return '';
       var div = pickDivision(w, division);
       var mine = day.entries.filter(function(e){ return e.eventNo === no; })
@@ -883,11 +896,13 @@
   // tiers that teams do not), so the picker is rebuilt when the day changes.
   var pickerDay = null;
   function syncPicker(day){
-    document.getElementById('picker').hidden = viewMode !== 'wods';
+    var choices = divisionChoices(day);
+    // Friday's one event has a single block, so there is nothing to pick.
+    document.getElementById('picker').hidden =
+      viewMode !== 'wods' || !choices.length;
     if (pickerDay === day.id) return;
     pickerDay = day.id;
     var sel = document.getElementById('division');
-    var choices = divisionChoices(day);
     sel.innerHTML = choices.map(function(c){
       return '<option>' + esc(c) + '</option>';
     }).join('');
@@ -910,9 +925,9 @@
 
     document.getElementById('clock').textContent = fmtClock(t);
 
-    ['saturday','sunday'].forEach(function(id){
-      document.getElementById('tab-' + id)
-        .setAttribute('aria-selected', String(id === dayId));
+    DATA.days.forEach(function(d){
+      document.getElementById('tab-' + d.id)
+        .setAttribute('aria-selected', String(d.id === dayId));
     });
 
     var hero = document.getElementById('hero'),
@@ -931,7 +946,7 @@
       heroV.className = 'hero-v num';
       heroV.innerHTML = durHTML(away);
       heroSub.textContent = fmtClock(b.first) + ' · ' + day.division + ' · ' +
-        (day.entries.length / 4) + ' ' + (dayId === 'sunday' ? 'teams' : 'athletes');
+        day.competitors + ' ' + (dayId === 'sunday' ? 'teams' : 'athletes');
 
       announce('First heat ' + day.label + ' at ' + fmtClock(b.first));
 
@@ -950,7 +965,7 @@
       heroV.className = 'hero-v words';
       heroV.textContent = 'That’s a wrap';
       heroSub.textContent = (day.heatCount || 0) + ' heats done · ' +
-        (day.entries.length / 4) + (dayId === 'sunday' ? ' teams' : ' athletes') +
+        day.competitors + (dayId === 'sunday' ? ' teams' : ' athletes') +
         ' · last at ' + fmtClock(b.last - day.heatMinutes * 60000);
       announce(day.label + ' complete');
 
@@ -1038,12 +1053,22 @@
     paint(out.join(''));
   }
 
-  /* ---- tabs ---- */
-  ['saturday','sunday'].forEach(function(id){
-    document.getElementById('tab-' + id).addEventListener('click', function(){
-      selected = id; render();
+  /* ---- tabs, one per competition day ---- */
+  (function(){
+    var fmt = new Intl.DateTimeFormat('en-US', { day: 'numeric', timeZone: 'UTC' });
+    document.getElementById('tabs').innerHTML = DATA.days.map(function(d){
+      return '<button class="tab" type="button" role="tab" id="tab-' + d.id +
+        '" aria-selected="false" aria-controls="panel">' +
+        d.label.slice(0, 3).toUpperCase() + ' ' +
+        fmt.format(new Date(d.date + 'T12:00:00Z')) +
+        '<small>' + esc(d.division.replace(/\s+Event$/i, '')) + '</small></button>';
+    }).join('');
+    DATA.days.forEach(function(d){
+      document.getElementById('tab-' + d.id).addEventListener('click', function(){
+        selected = d.id; render();
+      });
     });
-  });
+  })();
 
   /* ---- view mode ---- */
   // Remembered per viewer. Storage throws in some private-browsing modes, so
@@ -1068,13 +1093,8 @@
     });
   });
 
-  /* ---- date labels ---- */
+  /* ---- simulated-time marker ---- */
   (function(){
-    var f = new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',timeZone:'UTC'});
-    document.getElementById('satDate').textContent =
-      f.format(new Date(DAYS.saturday.date + 'T12:00:00Z'));
-    document.getElementById('sunDate').textContent =
-      f.format(new Date(DAYS.sunday.date + 'T12:00:00Z'));
     if (frozen !== null) {
       document.getElementById('venueLine').textContent = 'Pensacola Beach · simulated time';
     }

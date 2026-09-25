@@ -52,7 +52,10 @@ function t(name, fn) {
   catch (e) { fail++; console.log('  FAIL ' + name + '\n       ' + e.message); }
 }
 
-const SAT = DAYS.saturday, SUN = DAYS.sunday;
+const SAT = DAYS.saturday, SUN = DAYS.sunday, FRI = DAYS.friday;
+// The arenas a given day actually runs, in event order.
+const eventsOf = day => [...new Map(day.entries.map(e => [e.eventNo, e.arena]))]
+  .sort((a, b) => a[0] - b[0]);
 const at = (day, hhmm) => {
   const [h, m] = hhmm.split(':').map(Number);
   return wallToEpoch(day.date, h * 3600 + m * 60);
@@ -92,8 +95,14 @@ t('Sunday spans 8:00 AM to 5:12 PM (last heat + 17m)', () => {
 });
 
 console.log('\nauto day selection');
-t('before the weekend -> saturday', () => {
-  assert.strictEqual(autoDay(Date.parse('2026-09-21T17:00:00Z')), 'saturday');
+t('before the weekend -> friday', () => {
+  assert.strictEqual(autoDay(Date.parse('2026-09-21T17:00:00Z')), 'friday');
+});
+t('during friday -> friday', () => {
+  assert.strictEqual(autoDay(at(FRI, '10:45')), 'friday');
+});
+t('friday evening rolls on to saturday', () => {
+  assert.strictEqual(autoDay(at(FRI, '20:00')), 'saturday');
 });
 t('during saturday -> saturday', () => {
   assert.strictEqual(autoDay(at(SAT, '14:31')), 'saturday');
@@ -217,20 +226,25 @@ t('every minute of both days', () => {
 
 console.log('\narena view');
 t('each arena maps to its own colour class, in sheet order', () => {
-  assert.deepStrictEqual(data.arenas.map(arenaCls), ['a0', 'a1', 'a2', 'a3']);
+  assert.deepStrictEqual(data.arenas.map(arenaCls),
+    data.arenas.map((_, i) => 'a' + i));
+  assert.strictEqual(data.arenas.length, 5, 'four arenas plus the beach event');
+  assert.strictEqual(arenaCls('Elite Beach Event'), 'a4');
   assert.strictEqual(arenaCls('Not An Arena'), '');
 });
-t('emits one section per arena, labelled with its event number', () => {
-  const html = arenaSections(SAT, classify(SAT, at(SAT, '14:31')));
-  data.arenas.forEach((arena, i) => {
-    assert.ok(html.includes('<i>Event ' + (i + 1) + '</i><b>' + arena + '</b>'),
-      'missing section for ' + arena);
-  });
-  assert.strictEqual((html.match(/<section class="sec /g) || []).length, 4);
+t('emits one section per event the day actually runs', () => {
+  for (const [day, when, want] of [[SAT, '14:31', 4], [SUN, '13:20', 4], [FRI, '10:45', 1]]) {
+    const html = arenaSections(day, classify(day, at(day, when)));
+    eventsOf(day).forEach(([no, arena]) => {
+      assert.ok(html.includes('<i>Event ' + no + '</i><b>' + arena + '</b>'),
+        `${day.id}: missing section for ${arena}`);
+    });
+    assert.strictEqual((html.match(/<section class="sec /g) || []).length, want, day.id);
+  }
 });
 t('a section lists only its own arena, in time order', () => {
   const html = arenaSections(SAT, classify(SAT, at(SAT, '14:31')));
-  data.arenas.forEach((arena, i) => {
+  eventsOf(SAT).forEach(([, arena], i) => {
     const body = html.split('<section class="sec ')[i + 1];
     const expected = SAT.entries
       .filter(e => e.arena === arena)
@@ -328,6 +342,43 @@ t('the tag line reads format then cap', () => {
   assert.strictEqual(wodTag(SAT, 1), 'For Time · 12:00 cap');
   assert.strictEqual(wodTag(SAT, 2), '3 Rounds for time · 12:00 cap');
   assert.strictEqual(wodTag(SUN, 4), 'For max weight · 13:00 cap');
+});
+
+console.log('\nfriday');
+t('Friday is one heat at 10:30 AM with both athletes', () => {
+  assert.strictEqual(FRI.entries.length, 2);
+  assert.deepStrictEqual(
+    FRI.entries.map(e => `${e.name} L${e.lane}`),
+    ['Whitney Dunn L1', 'Savannah Branch L2']);
+  FRI.entries.forEach(e => {
+    assert.strictEqual(e.time, '10:30 AM');
+    assert.strictEqual(e.heat, 1);
+    assert.strictEqual(e.arena, 'Elite Beach Event');
+  });
+});
+t('Friday runs on a 45-minute heat', () => {
+  assert.strictEqual(FRI.heatMinutes, 45);
+  const b = dayBounds(FRI);
+  assert.strictEqual(fmtClock(b.first), '10:30 AM');
+  assert.strictEqual(fmtClock(b.last), '11:15 AM');
+});
+t('both are live through the heat and done after it', () => {
+  assert.strictEqual(classify(FRI, at(FRI, '10:29')).live.length, 0);
+  assert.strictEqual(classify(FRI, at(FRI, '10:30')).live.length, 2);
+  assert.strictEqual(classify(FRI, at(FRI, '11:14')).live.length, 2);
+  assert.strictEqual(classify(FRI, at(FRI, '11:15')).live.length, 0);
+  assert.strictEqual(classify(FRI, at(FRI, '11:15')).done.length, 2);
+});
+t('Friday has the beach event workout and no division to pick', () => {
+  const w = wodFor(FRI, 1);
+  assert.ok(w, 'no Friday workout');
+  assert.strictEqual(w.arena, 'Elite Beach Event');
+  assert.ok(w.divisions[0].lines.some(l => /500 Meter Swim/.test(l)));
+  assert.deepStrictEqual(divisionChoices(FRI), []);
+});
+t('neither is still listed as a Saturday TBD', () => {
+  assert.deepStrictEqual(SAT.tbd, []);
+  assert.ok(!SAT.entries.some(e => /Whitney|Savannah/.test(e.name)));
 });
 
 console.log('\nduration formatting');

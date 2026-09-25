@@ -6,9 +6,41 @@
     "Backout Barbell Arena",
     "Mayhem Athlete Arena",
     "LRX Beach Arena",
-    "PR Apparel Arena"
+    "PR Apparel Arena",
+    "Elite Beach Event"
   ],
   "days": [
+    {
+      "id": "friday",
+      "label": "Friday",
+      "date": "2026-09-25",
+      "division": "Elite Beach Event",
+      "heatMinutes": 45,
+      "wodKey": "elite",
+      "entries": [
+        {
+          "name": "Whitney Dunn",
+          "arena": "Elite Beach Event",
+          "eventNo": 1,
+          "time": "10:30 AM",
+          "startSec": 37800,
+          "heat": 1,
+          "lane": 1
+        },
+        {
+          "name": "Savannah Branch",
+          "arena": "Elite Beach Event",
+          "eventNo": 1,
+          "time": "10:30 AM",
+          "startSec": 37800,
+          "heat": 1,
+          "lane": 2
+        }
+      ],
+      "tbd": [],
+      "heatCount": 1,
+      "competitors": 2
+    },
     {
       "id": "saturday",
       "label": "Saturday",
@@ -378,11 +410,9 @@
           "lane": 4
         }
       ],
-      "tbd": [
-        "Savannah Branch",
-        "Whitney Dunn"
-      ],
-      "heatCount": 20
+      "tbd": [],
+      "heatCount": 20,
+      "competitors": 10
     },
     {
       "id": "sunday",
@@ -574,7 +604,8 @@
         }
       ],
       "tbd": [],
-      "heatCount": 20
+      "heatCount": 20,
+      "competitors": 5
     }
   ]
 }
