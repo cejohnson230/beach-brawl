@@ -50,6 +50,24 @@
       "wodKey": "individual",
       "entries": [
         {
+          "name": "Savannah Branch",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "8:00 AM",
+          "startSec": 28800,
+          "heat": 1,
+          "lane": 2
+        },
+        {
+          "name": "Whitney Dunn",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
+          "time": "8:00 AM",
+          "startSec": 28800,
+          "heat": 1,
+          "lane": 1
+        },
+        {
           "name": "Caitlyn Livingston",
           "arena": "LRX Beach Arena",
           "eventNo": 3,
@@ -71,6 +89,15 @@
           "name": "Kelsey Graham",
           "arena": "LRX Beach Arena",
           "eventNo": 3,
+          "time": "8:15 AM",
+          "startSec": 29700,
+          "heat": 2,
+          "lane": 6
+        },
+        {
+          "name": "Rachel Graham",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
           "time": "8:15 AM",
           "startSec": 29700,
           "heat": 2,
@@ -140,6 +167,24 @@
           "lane": 4
         },
         {
+          "name": "Savannah Branch",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "10:20 AM",
+          "startSec": 37200,
+          "heat": 9,
+          "lane": 2
+        },
+        {
+          "name": "Whitney Dunn",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
+          "time": "10:20 AM",
+          "startSec": 37200,
+          "heat": 9,
+          "lane": 1
+        },
+        {
           "name": "Caitlyn Livingston",
           "arena": "PR Apparel Arena",
           "eventNo": 4,
@@ -161,6 +206,15 @@
           "name": "Kelsey Graham",
           "arena": "PR Apparel Arena",
           "eventNo": 4,
+          "time": "10:35 AM",
+          "startSec": 38100,
+          "heat": 10,
+          "lane": 6
+        },
+        {
+          "name": "Rachel Graham",
+          "arena": "Backout Barbell Arena",
+          "eventNo": 1,
           "time": "10:35 AM",
           "startSec": 38100,
           "heat": 10,
@@ -230,6 +284,24 @@
           "lane": 4
         },
         {
+          "name": "Savannah Branch",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "1:00 PM",
+          "startSec": 46800,
+          "heat": 17,
+          "lane": 2
+        },
+        {
+          "name": "Whitney Dunn",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
+          "time": "1:00 PM",
+          "startSec": 46800,
+          "heat": 17,
+          "lane": 1
+        },
+        {
           "name": "Caitlyn Livingston",
           "arena": "Backout Barbell Arena",
           "eventNo": 1,
@@ -251,6 +323,15 @@
           "name": "Kelsey Graham",
           "arena": "Backout Barbell Arena",
           "eventNo": 1,
+          "time": "1:15 PM",
+          "startSec": 47700,
+          "heat": 18,
+          "lane": 6
+        },
+        {
+          "name": "Rachel Graham",
+          "arena": "Mayhem Athlete Arena",
+          "eventNo": 2,
           "time": "1:15 PM",
           "startSec": 47700,
           "heat": 18,
@@ -320,6 +401,24 @@
           "lane": 4
         },
         {
+          "name": "Savannah Branch",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "3:30 PM",
+          "startSec": 55800,
+          "heat": 25,
+          "lane": 2
+        },
+        {
+          "name": "Whitney Dunn",
+          "arena": "PR Apparel Arena",
+          "eventNo": 4,
+          "time": "3:30 PM",
+          "startSec": 55800,
+          "heat": 25,
+          "lane": 1
+        },
+        {
           "name": "Caitlyn Livingston",
           "arena": "Mayhem Athlete Arena",
           "eventNo": 2,
@@ -341,6 +440,15 @@
           "name": "Kelsey Graham",
           "arena": "Mayhem Athlete Arena",
           "eventNo": 2,
+          "time": "3:45 PM",
+          "startSec": 56700,
+          "heat": 26,
+          "lane": 6
+        },
+        {
+          "name": "Rachel Graham",
+          "arena": "LRX Beach Arena",
+          "eventNo": 3,
           "time": "3:45 PM",
           "startSec": 56700,
           "heat": 26,
@@ -411,8 +519,8 @@
         }
       ],
       "tbd": [],
-      "heatCount": 20,
-      "competitors": 10
+      "heatCount": 24,
+      "competitors": 13
     },
     {
       "id": "sunday",

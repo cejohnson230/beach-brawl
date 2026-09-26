@@ -83,9 +83,9 @@ t('survives a DST boundary (Nov 1 2026 fall-back)', () => {
 });
 
 console.log('\nday bounds');
-t('Saturday spans 8:15 AM to 5:30 PM (last heat + 15m)', () => {
+t('Saturday spans 8:00 AM to 5:30 PM (last heat + 15m)', () => {
   const b = dayBounds(SAT);
-  assert.strictEqual(fmtClock(b.first), '8:15 AM');
+  assert.strictEqual(fmtClock(b.first), '8:00 AM');
   assert.strictEqual(fmtClock(b.last), '5:30 PM');
 });
 t('Sunday spans 8:00 AM to 5:12 PM (last heat + 17m)', () => {
@@ -277,9 +277,13 @@ t('completed rows are marked done, upcoming rows are unmarked', () => {
   assert.strictEqual(antLater.cls, '');
 });
 t('before the first heat nothing is marked done', () => {
-  const html = arenaSections(SAT, classify(SAT, at(SAT, '7:00')));
+  const c = classify(SAT, at(SAT, '7:00'));
+  const html = arenaSections(SAT, c);
   assert.ok(!html.includes('is-done'));
-  assert.strictEqual((html.match(/class="tag">Next</g) || []).length, 3);
+  // Everyone sharing the day's first start time is queued as next.
+  const firstSec = Math.min(...SAT.entries.map(e => e.startSec));
+  assert.strictEqual((html.match(/class="tag">Next</g) || []).length,
+    SAT.entries.filter(e => e.startSec === firstSec).length);
 });
 
 console.log('\nworkouts');
@@ -376,9 +380,31 @@ t('Friday has the beach event workout and no division to pick', () => {
   assert.ok(w.divisions[0].lines.some(l => /500 Meter Swim/.test(l)));
   assert.deepStrictEqual(divisionChoices(FRI), []);
 });
-t('neither is still listed as a Saturday TBD', () => {
+t('Whitney and Savannah are scheduled on both days, not TBD', () => {
   assert.deepStrictEqual(SAT.tbd, []);
-  assert.ok(!SAT.entries.some(e => /Whitney|Savannah/.test(e.name)));
+  for (const who of ['Whitney Dunn', 'Savannah Branch']) {
+    assert.strictEqual(FRI.entries.filter(e => e.name === who).length, 1, who + ' friday');
+    assert.strictEqual(SAT.entries.filter(e => e.name === who).length, 4, who + ' saturday');
+  }
+  // They keep the same lane across both days.
+  const lane = who => [...new Set([...FRI.entries, ...SAT.entries]
+    .filter(e => e.name === who).map(e => e.lane))];
+  assert.deepStrictEqual(lane('Whitney Dunn'), [1]);
+  assert.deepStrictEqual(lane('Savannah Branch'), [2]);
+});
+t('the derived block-opening heats land between their neighbours', () => {
+  const byHeat = new Map(SAT.entries.map(e => [e.heat, e.startSec]));
+  for (const h of [1, 9, 17, 25]) {
+    assert.ok(byHeat.has(h), 'heat ' + h + ' missing');
+    if (byHeat.has(h - 1)) assert.ok(byHeat.get(h - 1) < byHeat.get(h), `H${h-1} < H${h}`);
+    assert.ok(byHeat.get(h) < byHeat.get(h + 1), `H${h} < H${h+1}`);
+  }
+});
+t('Rachel Graham holds lane 6 across all four events', () => {
+  const rs = SAT.entries.filter(e => e.name === 'Rachel Graham')
+    .sort((a, b) => a.eventNo - b.eventNo);
+  assert.deepStrictEqual(rs.map(e => `${e.heat}/${e.lane} ${e.time}`),
+    ['10/6 10:35 AM', '18/6 1:15 PM', '26/6 3:45 PM', '2/6 8:15 AM']);
 });
 
 console.log('\nduration formatting');
